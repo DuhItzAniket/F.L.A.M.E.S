@@ -36,6 +36,7 @@ public final class MainApp extends Application {
         stage.setMinHeight(540);
         stage.setScene(scene);
         stage.show();
+        inputView.focusFirst();
     }
 
     private void calculate(String first, String second) {
@@ -54,10 +55,12 @@ public final class MainApp extends Application {
                 () -> {
                     inputView.keepNames(outcome.displayName1(), outcome.displayName2());
                     root.getChildren().setAll(inputView);
+                    inputView.focusFirst();
                 },
                 () -> {
                     inputView.keepNames("", "");
                     root.getChildren().setAll(inputView);
+                    inputView.focusFirst();
                 }));
     }
 

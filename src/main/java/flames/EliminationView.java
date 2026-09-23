@@ -48,6 +48,8 @@ public final class EliminationView extends VBox {
             Label tile = new Label(String.valueOf(letter));
             tile.getStyleClass().add("tile");
             tile.setTooltip(new Tooltip(FlamesCategory.fromLetter(letter).title()));
+            tile.setAccessibleText(letter + ", " + FlamesCategory.fromLetter(letter).title()
+                    + ", still standing.");
             tiles.put(letter, tile);
             row.getChildren().add(tile);
         }
@@ -55,16 +57,24 @@ public final class EliminationView extends VBox {
         status.getStyleClass().add("status");
         status.setText("Steady\u2026");
 
-        Label hint = new Label("click anywhere to skip");
+        Label hint = new Label("click or press Enter to skip");
         hint.getStyleClass().add("hint");
 
+        setFocusTraversable(true);
         setOnMouseClicked(e -> finish());
+        setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+                case ENTER, SPACE -> finish();
+                default -> {
+                }
+            }
+        });
         getChildren().addAll(heading, names, row, status, hint);
     }
 
     /** Starts the elimination sequence. Safe to call once the view is shown. */
     public void play() {
-        timeline = new Timeline();
+        requestFocus();        timeline = new Timeline();
         var order = outcome.eliminationOrder();
         for (int i = 0; i < order.size(); i++) {
             final int step = i;
@@ -83,6 +93,7 @@ public final class EliminationView extends VBox {
 
     private void strike(char letter, int left) {
         tiles.get(letter).getStyleClass().add("tile-out");
+        tiles.get(letter).setAccessibleText(letter + ", out.");
         status.setText(left == 1
                 ? letter + " falls \u2014 one survives."
                 : letter + " falls \u2014 " + left + " remain.");
@@ -91,6 +102,8 @@ public final class EliminationView extends VBox {
     private void crown() {
         char winner = outcome.category().letter();
         tiles.get(winner).getStyleClass().add("tile-winner");
+        tiles.get(winner).setAccessibleText(
+                winner + ", " + outcome.category().title() + ", the verdict.");
         status.setText(winner + " stands alone.");
     }
 

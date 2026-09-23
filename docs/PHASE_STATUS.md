@@ -49,3 +49,13 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Wired: window icons (16/32/48), input-view logo (128).
 - Verification: `mvn -B verify` green (12/12); ICO header + PNG signatures
   checked byte-level; icons confirmed inside the built jar.
+
+## Phase 6 — UX / Interaction Polish — COMPLETE
+
+- Focus lands in the first field on launch and on every return to input;
+  Enter submits (input) / goes back (result); Enter or Space skips the
+  animation; tooltips on fields, buttons, and tiles; screen-reader text on
+  tiles tracks each fall and the crowning.
+- Verification: `mvn -B verify` green (12/12). Keyboard order follows the
+  natural tab order (fields → actions); on-display key pass deferred with
+  the rendered-UI smoke.

@@ -35,7 +35,8 @@ public final class ResultView extends VBox {
 
         Button change = new Button("Change names");
         change.getStyleClass().add("btn-primary");
-        change.setTooltip(new Tooltip("Back to the names, keeping what you typed"));
+        change.setDefaultButton(true);
+        change.setTooltip(new Tooltip("Back to the names, keeping what you typed (Enter)"));
         change.setOnAction(e -> onChangeNames.run());
 
         Button again = new Button("Start over");

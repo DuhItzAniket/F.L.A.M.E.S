@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -39,11 +40,11 @@ public final class InputView extends VBox {
 
         Label firstLabel = new Label("First name");
         firstLabel.setLabelFor(firstName);
-        styleField(firstName, "e.g. Romeo");
+        styleField(firstName, "e.g. Romeo", "First name — only letters count, the rest is ignored");
 
         Label secondLabel = new Label("Second name");
         secondLabel.setLabelFor(secondName);
-        styleField(secondName, "e.g. Juliet");
+        styleField(secondName, "e.g. Juliet", "Second name — only letters count, the rest is ignored");
 
         error.getStyleClass().add("error");
         error.setVisible(false);
@@ -87,8 +88,13 @@ public final class InputView extends VBox {
         showError(null);
     }
 
-    private void styleField(TextField field, String prompt) {
+    public void focusFirst() {
+        firstName.requestFocus();
+    }
+
+    private void styleField(TextField field, String prompt, String tip) {
         field.setPromptText(prompt);
+        field.setTooltip(new Tooltip(tip));
         field.getStyleClass().add("field");
         // ponytail: 50-char cap — names longer than this never change the verdict
         field.setTextFormatter(new TextFormatter<String>(change ->
