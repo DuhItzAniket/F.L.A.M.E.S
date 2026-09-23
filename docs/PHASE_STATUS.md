@@ -21,3 +21,13 @@
 
 Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 (Phase 5) not started. No license file yet — owner decision pending.
+
+## Phase 3 — Application UI — COMPLETE
+
+- `InputView` (two name fields, 50-char cap, inline errors, Enter to submit),
+  `ResultView` (names, verdict, meaning, replay actions), `MainApp` view
+  swapping, `assets/flames.css` ("ember notebook" theme).
+- Verification: `mvn -B verify` green (12/12). Headless UI-construction test
+  attempted — JavaFX toolkit needs a display, so it was removed; rendered-UI
+  smoke test deferred to an environment with a display (owner machine).
+- Docs: README status updated.

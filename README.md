@@ -8,7 +8,8 @@ Fully offline — names never leave your machine.
 
 ## Status
 
-Phases 0–2 done (foundation + game engine + tests). Game UI lands in Phase 3.
+Phase 3 done: name entry, verdict view, and inline error states.
+Elimination animation lands in Phase 4.
 See `docs/PHASE_STATUS.md` and `docs/DEVELOPMENT_PLAN.md`.
 
 ## Prerequisites

@@ -1,0 +1,143 @@
+/* F.L.A.M.E.S — "ember notebook" theme. Warm paper, ink text, ember accent. */
+
+.root {
+    -fx-background-color: #F7F0E1;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.title {
+    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-size: 46px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2118;
+}
+
+.subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6B5D4F;
+    -fx-padding: 0 0 8px 0;
+}
+
+.label {
+    -fx-text-fill: #2B2118;
+    -fx-font-size: 14px;
+}
+
+.field {
+    -fx-font-size: 16px;
+    -fx-prompt-text-fill: #A2937E;
+    -fx-text-fill: #2B2118;
+    -fx-background-color: #FFFDF6;
+    -fx-background-radius: 10px;
+    -fx-border-color: #D8C9AE;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 10px 14px;
+}
+
+.field:focused {
+    -fx-border-color: #D9A441;
+    -fx-effect: dropshadow(gaussian, rgba(217, 164, 65, 0.45), 8, 0, 0, 0);
+}
+
+.error {
+    -fx-text-fill: #A02A22;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.btn-primary {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFF8EC;
+    -fx-background-color: #A02A22;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #C93A2E;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #7E201A;
+}
+
+.btn-ghost {
+    -fx-font-size: 15px;
+    -fx-text-fill: #2B2118;
+    -fx-background-color: transparent;
+    -fx-border-color: #D8C9AE;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 9px 22px;
+    -fx-cursor: hand;
+}
+
+.btn-ghost:hover {
+    -fx-border-color: #2B2118;
+}
+
+.names {
+    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-size: 22px;
+    -fx-text-fill: #2B2118;
+}
+
+.word {
+    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A02A22;
+}
+
+.meaning {
+    -fx-font-size: 17px;
+    -fx-font-style: italic;
+    -fx-text-fill: #6B5D4F;
+    -fx-padding: 0 0 10px 0;
+}
+
+/* Elimination tiles (Phase 4 animates these). */
+.tiles {
+    -fx-alignment: center;
+}
+
+.tile {
+    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2118;
+    -fx-background-color: #FFFDF6;
+    -fx-background-radius: 10px;
+    -fx-border-color: #2B2118;
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-min-width: 58px;
+    -fx-min-height: 66px;
+    -fx-alignment: center;
+}
+
+.tile-out {
+    -fx-text-fill: #A2937E;
+    -fx-border-color: #A2937E;
+    -fx-strikethrough: true;
+    -fx-opacity: 0.55;
+}
+
+.tile-winner {
+    -fx-text-fill: #FFF8EC;
+    -fx-background-color: #A02A22;
+    -fx-border-color: #A02A22;
+}
+
+.status {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6B5D4F;
+}
+
+.hint {
+    -fx-font-size: 13px;
+    -fx-text-fill: #A2937E;
+}
