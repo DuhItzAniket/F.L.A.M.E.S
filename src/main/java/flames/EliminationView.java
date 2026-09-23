@@ -74,7 +74,8 @@ public final class EliminationView extends VBox {
 
     /** Starts the elimination sequence. Safe to call once the view is shown. */
     public void play() {
-        requestFocus();        timeline = new Timeline();
+        requestFocus();
+        timeline = new Timeline();
         var order = outcome.eliminationOrder();
         for (int i = 0; i < order.size(); i++) {
             final int step = i;
@@ -92,7 +93,8 @@ public final class EliminationView extends VBox {
     }
 
     private void strike(char letter, int left) {
-        tiles.get(letter).getStyleClass().add("tile-out");
+        Label tile = tiles.get(letter);
+        addStyle(tile, "tile-out");
         tiles.get(letter).setAccessibleText(letter + ", out.");
         status.setText(left == 1
                 ? letter + " falls \u2014 one survives."
@@ -101,7 +103,8 @@ public final class EliminationView extends VBox {
 
     private void crown() {
         char winner = outcome.category().letter();
-        tiles.get(winner).getStyleClass().add("tile-winner");
+        Label tile = tiles.get(winner);
+        addStyle(tile, "tile-winner");
         tiles.get(winner).setAccessibleText(
                 winner + ", " + outcome.category().title() + ", the verdict.");
         status.setText(winner + " stands alone.");
@@ -121,6 +124,12 @@ public final class EliminationView extends VBox {
         }
         crown();
         onDone.run();
+    }
+
+    private static void addStyle(Label tile, String style) {
+        if (!tile.getStyleClass().contains(style)) {
+            tile.getStyleClass().add(style);
+        }
     }
 
     private static String countLine(FlamesOutcome outcome) {

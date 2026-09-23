@@ -84,3 +84,13 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   no stray files.
 - Verification: `mvn -B verify` green (16/16); `git status` shows only
   intended files.
+
+## Phase 10 — Final Quality Gate — COMPLETE (this commit)
+
+- Gate review: re-read all views; fixed a formatting glitch and duplicate
+  style-class adds on skip-after-partial-animation; grep confirms no
+  TODO/FIXME/placeholder/debug output; every CSS class used; no secrets.
+- `mvn -B clean verify` green (16/16) on version 1.0.0; tagged `v1.0.0`.
+- Known limitation carried honestly: the on-display walkthrough
+  (launch → calculate → animation → verdict → replay) needs a machine with
+  a display; headless CI covers compile + the full engine suite.
