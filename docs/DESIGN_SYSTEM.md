@@ -12,7 +12,7 @@ doesn't ship.
 | card | `#FFFDF6` | fields, tiles |
 | ink | `#2B2118` | text, tile borders |
 | ink-soft | `#6B5D4F` | subtitles, status, meanings |
-| faint | `#A2937E` | prompts, hints, fallen tiles |
+| faint | `#75644E` | prompts, hints, fallen tiles |
 | line | `#D8C9AE` | field borders |
 | ember | `#C93A2E` | hover, highlights (large areas only) |
 | ember-deep | `#A02A22` | primary buttons, verdict word, winner tile |

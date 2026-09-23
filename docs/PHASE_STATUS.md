@@ -59,3 +59,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Verification: `mvn -B verify` green (12/12). Keyboard order follows the
   natural tab order (fields → actions); on-display key pass deferred with
   the rendered-UI smoke.
+
+## Phase 7 — Testing, Reliability & Accessibility — COMPLETE
+
+- Suite grew 12 → 16: hand-traced count-of-1 outcome, 144-pair invariant
+  sweep, category content/letter checks, long-input robustness.
+- Contrast audit measured per pair; `faint` darkened `#A2937E` → `#75644E`
+  (2.6 → 5.0 on paper). Audit + keyboard map recorded in `docs/TESTING.md`.
+- Verification: `mvn -B verify` green (16/16).

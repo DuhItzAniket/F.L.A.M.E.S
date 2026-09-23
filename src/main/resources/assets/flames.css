@@ -25,7 +25,7 @@
 
 .field {
     -fx-font-size: 16px;
-    -fx-prompt-text-fill: #A2937E;
+    -fx-prompt-text-fill: #75644E;
     -fx-text-fill: #2B2118;
     -fx-background-color: #FFFDF6;
     -fx-background-radius: 10px;
@@ -120,8 +120,8 @@
 }
 
 .tile-out {
-    -fx-text-fill: #A2937E;
-    -fx-border-color: #A2937E;
+    -fx-text-fill: #75644E;
+    -fx-border-color: #75644E;
     -fx-strikethrough: true;
     -fx-opacity: 0.55;
 }
@@ -139,5 +139,5 @@
 
 .hint {
     -fx-font-size: 13px;
-    -fx-text-fill: #A2937E;
+    -fx-text-fill: #75644E;
 }

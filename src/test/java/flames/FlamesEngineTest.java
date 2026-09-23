@@ -99,6 +99,49 @@ class FlamesEngineTest {
     }
 
     @Test
+    void countOfOneFallsStraightThroughToSiblings() {
+        FlamesOutcome outcome = FlamesEngine.calculate("a", "ab");
+        assertEquals(1, outcome.remainingCount());
+        assertEquals(FlamesCategory.SIBLINGS, outcome.category());
+        assertEquals(List.of('F', 'L', 'A', 'M', 'E'), outcome.eliminationOrder());
+    }
+
+    @Test
+    void invariantsHoldAcrossManyPairs() {
+        String[] names = {"romeo", "juliet", "a", "ab", "abc", "anna",
+                "Christopher", "Jo", "x", "yz", "FLAMES", "qwerty"};
+        for (String first : names) {
+            for (String second : names) {
+                FlamesOutcome outcome = FlamesEngine.calculate(first, second);
+                assertEquals(5, outcome.eliminationOrder().size());
+                assertTrue(!outcome.eliminationOrder().contains(outcome.category().letter()));
+                assertEquals(outcome.category(),
+                        FlamesEngine.calculate(first, second).category());
+            }
+        }
+    }
+
+    @Test
+    void categoriesAreCompleteAndDescribed() {
+        StringBuilder letters = new StringBuilder();
+        for (FlamesCategory category : FlamesCategory.values()) {
+            letters.append(category.letter());
+            assertTrue(!category.title().isBlank());
+            assertTrue(!category.meaning().isBlank());
+        }
+        assertEquals("FLAMES", letters.toString());
+    }
+
+    @Test
+    void longAndMessyInputsStillCompute() {
+        String first = "Ab".repeat(250) + "  !! \t";
+        String second = "\n zy!!".repeat(100);
+        FlamesOutcome outcome = FlamesEngine.calculate(first, second);
+        assertEquals(5, outcome.eliminationOrder().size());
+        assertEquals(first.strip(), outcome.displayName1());
+    }
+
+    @Test
     void everyCategoryResolvesFromItsLetter() {
         for (FlamesCategory category : FlamesCategory.values()) {
             assertEquals(category, FlamesCategory.fromLetter(category.letter()));
