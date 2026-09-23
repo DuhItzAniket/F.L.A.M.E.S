@@ -21,7 +21,7 @@ public final class InputView extends VBox {
     private final TextField secondName = new TextField();
     private final Label error = new Label();
 
-    public InputView(BiConsumer<String, String> onCalculate, Runnable onClear) {
+    public InputView(BiConsumer<String, String> onCalculate) {
         super(12);
         setAlignment(Pos.CENTER);
         setPadding(new Insets(32));
@@ -63,7 +63,7 @@ public final class InputView extends VBox {
             firstName.clear();
             secondName.clear();
             showError(null);
-            onClear.run();
+            firstName.requestFocus();
         });
 
         HBox actions = new HBox(12, calculate, clear);

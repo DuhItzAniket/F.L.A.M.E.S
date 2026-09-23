@@ -67,3 +67,20 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Contrast audit measured per pair; `faint` darkened `#A2937E` → `#75644E`
   (2.6 → 5.0 on paper). Audit + keyboard map recorded in `docs/TESTING.md`.
 - Verification: `mvn -B verify` green (16/16).
+
+## Phase 8 — Packaging & Release Engineering — COMPLETE
+
+- CI uploads the versioned jar as `flames-jar` (YAML parse-checked).
+- `docs/RELEASING.md`: versioning, verified jar/run paths, Windows
+  `jpackage` command (flagged unverified — needs WiX), release checklist.
+- Verification: `mvn -B verify` green (16/16).
+
+## Phase 9 — Documentation & Repository Polish — COMPLETE (this commit)
+
+- README rewritten as a complete storefront (play flow, run, internals,
+  docs index, status, license note).
+- Dead-code sweep: removed the no-op `onClear` callback (clear now returns
+  focus instead); confirmed every CSS class is used, `target/` ignored,
+  no stray files.
+- Verification: `mvn -B verify` green (16/16); `git status` shows only
+  intended files.

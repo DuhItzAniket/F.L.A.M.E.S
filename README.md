@@ -1,46 +1,68 @@
 # F.L.A.M.E.S
 
 A modern JavaFX revival of the classic old-school FLAMES name game.
-Enter two names, watch the letters fall, get your verdict:
+Enter two names, watch the letters fall one by one, get your verdict:
 **Friends, Love, Affection, Marriage, Enemies, Siblings.**
 
-Fully offline — names never leave your machine.
+Fully offline — names never leave your machine. No accounts, no tracking,
+no network calls.
 
-## Status
+## How it plays
 
-Phase 3 done: name entry, verdict view, and inline error states.
-Elimination animation lands in Phase 4.
-See `docs/PHASE_STATUS.md` and `docs/DEVELOPMENT_PLAN.md`.
+1. Type two names and hit **Reveal fate** (or Enter).
+2. Shared letters cancel out; the leftovers count around the
+   F·L·A·M·E·S tiles until one survives — click or press Enter to skip.
+3. The verdict appears with its meaning. **Change names** keeps your input,
+   **Start over** clears it.
 
-## Prerequisites
+Only letters count; case, spaces, punctuation, and digits are ignored.
+Names that cancel out completely (like identical names) wrap to one full
+counting cycle.
 
-- JDK 21 (LTS)
-- Maven 3.9+
+## Run it
 
-## Build, test, run
+Requires JDK 21 (LTS) + Maven 3.9+:
 
 ```sh
-mvn verify          # compile + full test suite
 mvn javafx:run      # launch the app (needs a display)
+mvn verify          # compile + full test suite (headless-safe)
 ```
 
-## How it works
+## Under the hood
 
-1. Names are lowercased; only letters are kept.
-2. Shared letters cancel out; the leftovers are counted.
-3. The count eliminates letters from F·L·A·M·E·S in a circle until one survives.
-4. Fully cancelling names (e.g. identical) wrap to one full cycle.
-
-Details in `docs/ARCHITECTURE.md` and `docs/TESTING.md`.
+- `FlamesEngine` — pure-Java game logic (normalize → cancel → eliminate),
+  independently tested, zero UI imports.
+- `EliminationView` replays the engine's recorded elimination order, so the
+  animation *is* the calculation, not a lookalike.
+- "Ember notebook" visual system: warm paper, ink text, one ember accent.
+  Tokens in `docs/DESIGN_SYSTEM.md`; custom app icon generated from
+  `tools/IconGenerator.java` (no downloaded graphics).
 
 ## Project structure
 
 ```
-pom.xml
-src/main/java/flames/      # engine, views, entry point
-src/main/resources/assets/ # flames.css, icon/ (PNGs + ICO)
-src/test/java/flames/      # JUnit suite
-tools/                     # IconGenerator (artwork source)
-docs/                      # plan, architecture, design, testing, phase status
-.github/workflows/         # CI
+pom.xml                            # pinned: JavaFX 21.0.4, JUnit 5.11.4
+src/main/java/flames/              # engine + views + entry point
+src/main/resources/assets/         # flames.css, icon/ (PNGs + ICO)
+src/test/java/flames/              # 16 JUnit tests
+tools/IconGenerator.java           # artwork source (pure Java2D)
+docs/                              # plan, architecture, design, testing,
+                                   # phase status, releasing
+.github/workflows/ci.yml           # build + test + jar artifact
 ```
+
+## Docs
+
+- `docs/DEVELOPMENT_PLAN.md` — vision, decisions, phases
+- `docs/ARCHITECTURE.md` — structure and key rules
+- `docs/DESIGN_SYSTEM.md` — palette, type, motion, assets
+- `docs/TESTING.md` — strategy plus the measured accessibility audit
+- `docs/PHASE_STATUS.md` — per-phase verification log
+- `docs/RELEASING.md` — versioning and release checklist
+
+## Status & license
+
+All phases 0–9 complete; `1.0.0` ships at the Phase 10 gate
+(see `docs/PHASE_STATUS.md` for the verification log, including the one
+check that needs a display: the on-screen UI walkthrough).
+License: to be chosen by the repository owner.

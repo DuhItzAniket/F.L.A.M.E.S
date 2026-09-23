@@ -18,8 +18,7 @@ public final class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        inputView = new InputView(this::calculate, () -> {
-        });
+        inputView = new InputView(this::calculate);
 
         root = new StackPane(inputView);
         root.setAlignment(Pos.CENTER);
