@@ -37,8 +37,10 @@ Details in `docs/ARCHITECTURE.md` and `docs/TESTING.md`.
 
 ```
 pom.xml
-src/main/java/flames/      # FlamesEngine, FlamesCategory, FlamesOutcome, MainApp
+src/main/java/flames/      # engine, views, entry point
+src/main/resources/assets/ # flames.css, icon/ (PNGs + ICO)
 src/test/java/flames/      # JUnit suite
-docs/                      # plan, architecture, testing, phase status
+tools/                     # IconGenerator (artwork source)
+docs/                      # plan, architecture, design, testing, phase status
 .github/workflows/         # CI
 ```

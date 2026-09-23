@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -26,6 +28,11 @@ public final class InputView extends VBox {
 
         Label title = new Label("F.L.A.M.E.S");
         title.getStyleClass().add("title");
+
+        ImageView logo = new ImageView(
+                new Image(getClass().getResourceAsStream("/assets/icon/icon-128.png")));
+        logo.setFitHeight(84);
+        logo.setPreserveRatio(true);
 
         Label subtitle = new Label("Two names in. One verdict out.");
         subtitle.getStyleClass().add("subtitle");
@@ -61,7 +68,7 @@ public final class InputView extends VBox {
         HBox actions = new HBox(12, calculate, clear);
         actions.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(title, subtitle, firstLabel, firstName,
+        getChildren().addAll(logo, title, subtitle, firstLabel, firstName,
                 secondLabel, secondName, error, actions);
     }
 

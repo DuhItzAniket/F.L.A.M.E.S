@@ -3,6 +3,7 @@ package flames;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -27,6 +28,10 @@ public final class MainApp extends Application {
         scene.getStylesheets().add(getClass().getResource("/assets/flames.css").toExternalForm());
 
         stage.setTitle("F.L.A.M.E.S");
+        stage.getIcons().addAll(
+                new Image(getClass().getResourceAsStream("/assets/icon/icon-16.png")),
+                new Image(getClass().getResourceAsStream("/assets/icon/icon-32.png")),
+                new Image(getClass().getResourceAsStream("/assets/icon/icon-48.png")));
         stage.setMinWidth(480);
         stage.setMinHeight(540);
         stage.setScene(scene);
