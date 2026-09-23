@@ -35,7 +35,10 @@ public final class MainApp extends Application {
 
     private void calculate(String first, String second) {
         try {
-            showResult(FlamesEngine.calculate(first, second));
+            FlamesOutcome outcome = FlamesEngine.calculate(first, second);
+            EliminationView elimination = new EliminationView(outcome, () -> showResult(outcome));
+            root.getChildren().setAll(elimination);
+            elimination.play();
         } catch (IllegalArgumentException ex) {
             inputView.showError(ex.getMessage());
         }

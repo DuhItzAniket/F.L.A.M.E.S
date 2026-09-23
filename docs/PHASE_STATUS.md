@@ -30,4 +30,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Verification: `mvn -B verify` green (12/12). Headless UI-construction test
   attempted — JavaFX toolkit needs a display, so it was removed; rendered-UI
   smoke test deferred to an environment with a display (owner machine).
-- Docs: README status updated.
+
+## Phase 4 — Visualization & Animation — COMPLETE
+
+- `EliminationView`: 500 ms/step tile strike-through replaying
+  `FlamesOutcome.eliminationOrder` (the real calculation, no duplicate
+  algorithm), narrating status line, winner crowning, click-to-skip.
+- Verification: `mvn -B verify` green (12/12). Timing/step logic reviewed;
+  on-display motion check deferred with the rest of the rendered-UI smoke.
