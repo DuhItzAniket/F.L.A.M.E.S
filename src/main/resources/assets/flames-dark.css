@@ -1,0 +1,162 @@
+/* F.L.A.M.E.S — "ember night" theme. Same tokens, inverted warmth.
+   Display type is loaded in code; CSS only names the family. */
+
+.root {
+    -fx-background-color: #231B14;
+}
+
+.title {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 46px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F4E9D2;
+}
+
+.subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #C9B795;
+    -fx-padding: 0 0 8px 0;
+}
+
+.label {
+    -fx-text-fill: #F4E9D2;
+    -fx-font-size: 14px;
+}
+
+.field {
+    -fx-font-size: 16px;
+    -fx-prompt-text-fill: #B9A888;
+    -fx-text-fill: #F4E9D2;
+    -fx-background-color: #31271C;
+    -fx-background-radius: 10px;
+    -fx-border-color: #4E4132;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 10px 14px;
+}
+
+.field:focused {
+    -fx-border-color: #E8B54A;
+    -fx-effect: dropshadow(gaussian, rgba(232, 181, 74, 0.45), 8, 0, 0, 0);
+}
+
+.error {
+    -fx-text-fill: #E0604F;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.btn-primary {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F4E9D2;
+    -fx-background-color: #A02A22;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 26px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #B23A2E;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #7E201A;
+}
+
+.btn-ghost {
+    -fx-font-size: 15px;
+    -fx-text-fill: #F4E9D2;
+    -fx-background-color: transparent;
+    -fx-border-color: #4E4132;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-padding: 9px 22px;
+    -fx-cursor: hand;
+}
+
+.btn-ghost:hover {
+    -fx-border-color: #F4E9D2;
+}
+
+.names {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 22px;
+    -fx-text-fill: #F4E9D2;
+}
+
+.word {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E0604F;
+}
+
+.meaning {
+    -fx-font-size: 17px;
+    -fx-font-style: italic;
+    -fx-text-fill: #C9B795;
+    -fx-padding: 0 0 10px 0;
+}
+
+.tiles {
+    -fx-alignment: center;
+}
+
+.tile {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F4E9D2;
+    -fx-background-color: #31271C;
+    -fx-background-radius: 10px;
+    -fx-border-color: #F4E9D2;
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-min-width: 58px;
+    -fx-min-height: 66px;
+    -fx-alignment: center;
+}
+
+.tile-out {
+    -fx-text-fill: #B9A888;
+    -fx-border-color: #B9A888;
+    -fx-strikethrough: true;
+    -fx-opacity: 0.55;
+}
+
+.tile-winner {
+    -fx-text-fill: #F4E9D2;
+    -fx-background-color: #A02A22;
+    -fx-border-color: #A02A22;
+}
+
+.status {
+    -fx-font-size: 15px;
+    -fx-text-fill: #C9B795;
+}
+
+.hint {
+    -fx-font-size: 13px;
+    -fx-text-fill: #B9A888;
+}
+
+.icon-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 8px;
+    -fx-cursor: hand;
+}
+
+.icon-btn:hover {
+    -fx-background-color: #31271C;
+}
+
+.gear-stroke {
+    -fx-stroke: #F4E9D2;
+    -fx-stroke-width: 3;
+}
+
+.gear-fill {
+    -fx-fill: #F4E9D2;
+}

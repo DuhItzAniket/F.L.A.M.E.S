@@ -131,3 +131,12 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   zero CSS/startup errors with the app running.
 - Verification: two live `run.bat` launches observed clean; `mvn -B verify`
   green (23/23).
+
+## Phase 12 — Themes — COMPLETE
+
+- `flames-dark.css` ("ember night"), full token swap, contrasts measured
+  (cream/bg 14.1, button 6.1, hover 4.9, faint 7.3 — all pass).
+- Theme ChoiceBox in the settings dialog; live swap incl. the open dialog;
+  persisted via `Settings`. Theme-parity test keeps both files' classes
+  identical.
+- Verification: suite 27 → 29 green; live launch log clean.

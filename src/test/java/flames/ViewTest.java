@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -193,5 +194,36 @@ class ViewTest {
                 List.of('F', 'L', 'X', 'M', 'E'), "a", "b");
         assertThrows(IllegalArgumentException.class, () -> new EliminationView(bad, () -> {
         }));
+    }
+
+    @Test
+    void bothThemesShipTheirStylesheet() {
+        assertNotNull(MainApp.class.getResource("/assets/flames.css"));
+        assertNotNull(MainApp.class.getResource("/assets/flames-dark.css"));
+        assertTrue(MainApp.stylesheetFor(Settings.THEME_DARK).endsWith("flames-dark.css"));
+        assertTrue(MainApp.stylesheetFor("neon").endsWith("flames.css"));
+    }
+
+    @Test
+    void themesDefineTheSameClasses() throws Exception {
+        assertEquals(cssClasses("/assets/flames.css"), cssClasses("/assets/flames-dark.css"));
+    }
+
+    private static java.util.Set<String> cssClasses(String resource) throws Exception {
+        java.util.Set<String> classes = new java.util.TreeSet<>();
+        try (var in = MainApp.class.getResourceAsStream(resource);
+                var reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8))) {
+            var pattern = java.util.regex.Pattern.compile("^\\.([a-z-]+)\\b");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                var matcher = pattern.matcher(line.strip());
+                if (matcher.find()) {
+                    classes.add(matcher.group(1));
+                }
+            }
+        }
+        assertFalse(classes.isEmpty(), resource + " defines no classes");
+        return classes;
     }
 }

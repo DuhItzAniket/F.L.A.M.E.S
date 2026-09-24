@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -14,21 +15,36 @@ import javafx.stage.Window;
 
 /**
  * The settings dialog opened from the gear button. Applies changes live and
- * persists them via {@link Settings}. (Theme control arrives in Phase 12.)
+ * persists them via {@link Settings}.
  */
 public final class SettingsDialog {
 
     private SettingsDialog() {
     }
 
-    public static void show(Window owner, String stylesheet, Settings settings) {
+    public static void show(Window owner, Settings settings, Runnable onThemeChanged) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(owner);
         dialog.setTitle("Settings");
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        if (stylesheet != null) {
-            dialog.getDialogPane().getStylesheets().add(stylesheet);
-        }
+
+        ChoiceBox<String> theme = new ChoiceBox<>();
+        theme.getItems().addAll("Light", "Dark");
+        theme.setValue(Settings.THEME_DARK.equals(settings.getTheme()) ? "Dark" : "Light");
+        theme.setTooltip(new Tooltip("Application theme"));
+        theme.setOnAction(e -> {
+            settings.setTheme("Dark".equals(theme.getValue())
+                    ? Settings.THEME_DARK : Settings.THEME_LIGHT);
+            onThemeChanged.run();
+            String css = MainApp.stylesheetFor(settings.getTheme());
+            dialog.getDialogPane().getStylesheets().clear();
+            if (css != null) {
+                dialog.getDialogPane().getStylesheets().add(css);
+            }
+        });
+
+        HBox themeRow = new HBox(12, new Label("Theme"), theme);
+        themeRow.setAlignment(Pos.CENTER_LEFT);
 
         CheckBox sound = new CheckBox("Sound effects");
         sound.setSelected(settings.isSoundEnabled());
@@ -51,9 +67,13 @@ public final class SettingsDialog {
         HBox volumeRow = new HBox(12, new Label("Volume"), volume);
         volumeRow.setAlignment(Pos.CENTER_LEFT);
 
-        VBox content = new VBox(12, sound, volumeRow, volumeLabel);
+        VBox content = new VBox(12, themeRow, sound, volumeRow, volumeLabel);
         content.setPadding(new Insets(16));
         dialog.getDialogPane().setContent(content);
+        String css = MainApp.stylesheetFor(settings.getTheme());
+        if (css != null) {
+            dialog.getDialogPane().getStylesheets().add(css);
+        }
         dialog.showAndWait();
     }
 }

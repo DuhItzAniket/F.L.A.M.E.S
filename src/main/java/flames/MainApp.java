@@ -28,6 +28,7 @@ public final class MainApp extends Application {
 
     private StackPane content;
     private InputView inputView;
+    private Scene scene;
     private final Settings settings = new Settings();
     private SoundBank sounds;
     private String stylesheet;
@@ -47,19 +48,15 @@ public final class MainApp extends Application {
         gear.setTooltip(new Tooltip("Settings"));
         gear.setOnAction(e -> {
             sounds.play("click");
-            SettingsDialog.show(stage, stylesheet, settings);
+            SettingsDialog.show(stage, settings, this::applyTheme);
         });
 
         StackPane root = new StackPane(content, gear);
         StackPane.setAlignment(gear, Pos.TOP_RIGHT);
         StackPane.setMargin(gear, new Insets(10));
 
-        Scene scene = new Scene(root, 640, 560);
-        URL css = getClass().getResource("/assets/flames.css");
-        if (css != null) {
-            stylesheet = css.toExternalForm();
-            scene.getStylesheets().add(stylesheet);
-        }
+        scene = new Scene(root, 640, 560);
+        applyTheme();
 
         stage.setTitle("F.L.A.M.E.S");
         for (String size : new String[]{"16", "32", "48"}) {
@@ -73,6 +70,23 @@ public final class MainApp extends Application {
         stage.setScene(scene);
         stage.show();
         inputView.focusFirst();
+    }
+
+    /** Stylesheet URL for a theme, or null if the file is missing. */
+    static String stylesheetFor(String theme) {
+        String file = Settings.THEME_DARK.equals(theme) ? "flames-dark.css" : "flames.css";
+        URL css = MainApp.class.getResource("/assets/" + file);
+        return css == null ? null : css.toExternalForm();
+    }
+
+    private void applyTheme() {
+        stylesheet = stylesheetFor(settings.getTheme());
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            if (stylesheet != null) {
+                scene.getStylesheets().add(stylesheet);
+            }
+        }
     }
 
     /**

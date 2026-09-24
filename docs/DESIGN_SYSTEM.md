@@ -6,18 +6,18 @@ doesn't ship.
 
 ## Palette
 
-| Token | Hex | Use |
-|---|---|---|
-| paper | `#F7F0E1` | app background |
-| card | `#FFFDF6` | fields, tiles |
-| ink | `#2B2118` | text, tile borders |
-| ink-soft | `#6B5D4F` | subtitles, status, meanings |
-| faint | `#75644E` | prompts, hints, fallen tiles |
-| line | `#D8C9AE` | field borders |
-| ember | `#C93A2E` | hover, highlights (large areas only) |
-| ember-deep | `#A02A22` | primary buttons, verdict word, winner tile |
-| ember-dark | `#8E231C` | icon gradient base |
-| gold | `#D9A441` | focus rings; icon flame-drop `#E8B54A` |
+Light (`flames.css`) — paper `#F7F0E1`, card `#FFFDF6`, ink `#2B2118`,
+ink-soft `#6B5D4F`, faint `#75644E`, line `#D8C9AE`, ember `#C93A2E`,
+ember-deep `#A02A22`.
+
+Dark "ember night" (`flames-dark.css`) — bg `#231B14`, card `#31271C`,
+cream `#F4E9D2`, soft `#C9B795`, faint `#B9A888`, line `#4E4132`,
+ember `#E0604F` (large text/hover states), ember-deep `#A02A22` (buttons),
+hover `#B23A2E`. Shared: gold `#E8B54A` focus, icon flame-drop `#E8B54A`.
+
+Measured dark pairs: cream/bg 14.1, soft/bg 8.6, cream/button 6.1,
+cream/hover 4.9, ember-word/bg 4.8 (large), faint/bg 7.3, error/bg 4.8.
+Both files define identical class sets (enforced by test).
 
 One accent (ember), one signal (gold). Errors reuse `ember-deep` + words —
 never color alone.
