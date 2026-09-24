@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -206,6 +207,21 @@ class ViewTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new EliminationView(bad, testSounds(), () -> {
                 }));
+    }
+
+    @Test
+    void cancellationLaysOutOneChipPerLetter() throws Exception {
+        fx(() -> {
+            EliminationView view = new EliminationView(
+                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
+                    });
+            List<StackPane> chips = new ArrayList<>();
+            collect(view.getChildren(), StackPane.class, chips);
+            long count = chips.stream()
+                    .filter(p -> p.getStyleClass().contains("chip"))
+                    .count();
+            assertEquals(8, count);
+        });
     }
 
     @Test

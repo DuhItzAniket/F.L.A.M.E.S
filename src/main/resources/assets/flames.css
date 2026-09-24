@@ -152,24 +152,29 @@
 }
 
 .chip {
-    -fx-font-family: 'Gentium Book Plus';
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2B2118;
     -fx-background-color: #FFFDF6;
     -fx-background-radius: 8px;
     -fx-border-color: #2B2118;
     -fx-border-radius: 8px;
     -fx-border-width: 1.5px;
-    -fx-min-width: 34px;
-    -fx-min-height: 40px;
     -fx-alignment: center;
+}
+
+.chip-label {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2118;
 }
 
 .chip-off {
     -fx-text-fill: #75644E;
-    -fx-border-color: #75644E;
-    -fx-strikethrough: true;
+}
+
+.slash {
+    -fx-stroke: #C93A2E;
+    -fx-stroke-width: 3;
+    -fx-stroke-line-cap: round;
 }
 
 .tile-hop {

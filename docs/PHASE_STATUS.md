@@ -164,3 +164,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Standing limitation, stated plainly: eyes-on verification of motion,
   theme look, and sound is yours — `run.bat`, gear button, try
   "romeo"/"juliet", then flip to dark + mute in settings.
+
+## Phase 15 — Pen-slash pair crossing — COMPLETE
+
+- Chips are fixed tiles; each crossed pair gets an animated pen slash
+  (line end interpolates corner to corner, 240 ms) and the letters stay
+  visibly crossed, like pen on paper — no more fading to invisible.
+- New `.chip-label`/`.slash` classes in both themes; `fadeOut` removed.
+- Verification: suite 31 → 32 green (chip-count test); live launch clean.

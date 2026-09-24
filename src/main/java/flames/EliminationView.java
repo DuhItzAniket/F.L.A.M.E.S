@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -16,7 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 /**
@@ -28,16 +30,25 @@ import javafx.util.Duration;
  */
 public final class EliminationView extends VBox {
 
-    /** One letter chip in the cancellation stage. */
+    /** One letter chip: a fixed tile with a pen slash drawn across on crossing. */
     private static final class Chip {
+        final StackPane box;
         final Label label;
+        final Line slash;
         final int codePoint;
         boolean taken;
 
         Chip(int codePoint) {
             this.codePoint = codePoint;
             this.label = new Label(new String(Character.toChars(codePoint)));
-            this.label.getStyleClass().add("chip");
+            this.label.getStyleClass().add("chip-label");
+            this.slash = new Line(0, 0, 0, 0);
+            this.slash.getStyleClass().add("slash");
+            this.slash.setVisible(false);
+            this.box = new StackPane(label, slash);
+            this.box.getStyleClass().add("chip");
+            this.box.setMinSize(40, 46);
+            this.box.setMaxSize(40, 46);
         }
     }
 
@@ -133,8 +144,8 @@ public final class EliminationView extends VBox {
                 final int step = k;
                 at = after(at + interval, () -> {
                     Chip[] pair = prepareCancel(step);
-                    fadeOut(pair[0].label);
-                    fadeOut(pair[1].label);
+                    drawSlash(pair[0].slash);
+                    drawSlash(pair[1].slash);
                     sounds.play("pop");
                 });
             }
@@ -198,7 +209,7 @@ public final class EliminationView extends VBox {
         FlowPane flow = new FlowPane(6, 6);
         flow.getStyleClass().add("chips");
         for (Chip chip : chips) {
-            flow.getChildren().add(chip.label);
+            flow.getChildren().add(chip.box);
         }
         VBox row = new VBox(4, caption, flow);
         row.setAlignment(Pos.CENTER);
@@ -279,7 +290,9 @@ public final class EliminationView extends VBox {
         }
         for (int k = 0; k < pops.size(); k++) {
             for (Chip chip : prepareCancel(k)) {
-                chip.label.setOpacity(0);
+                chip.slash.setVisible(true);
+                chip.slash.setEndX(30);
+                chip.slash.setEndY(36);
             }
         }
         cancelBox.setVisible(false);
@@ -296,10 +309,17 @@ public final class EliminationView extends VBox {
         onDone.run();
     }
 
-    private static void fadeOut(Label label) {
-        FadeTransition fade = new FadeTransition(Duration.millis(280), label);
-        fade.setToValue(0);
-        fade.play();
+    /** Draws the pen slash across a chip, top-left to bottom-right. */
+    private static void drawSlash(Line slash) {
+        slash.setVisible(true);
+        Timeline draw = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(slash.endXProperty(), 0),
+                        new KeyValue(slash.endYProperty(), 0)),
+                new KeyFrame(Duration.millis(240),
+                        new KeyValue(slash.endXProperty(), 30),
+                        new KeyValue(slash.endYProperty(), 36)));
+        draw.play();
     }
 
     private static void punch(Label label) {
