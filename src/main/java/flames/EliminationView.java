@@ -151,13 +151,35 @@ public final class EliminationView extends VBox {
             }
         }
 
+        List<Chip> survivors = survivors();
+        if (survivors.isEmpty()) {
+            at = after(at + 700, () -> {
+                status.setText("Nothing left \u2014 a perfect round.");
+            });
+        } else {
+            at = after(at + 200, () -> status.setText("Counting the survivors\u2026"));
+            double countInterval = Math.min(300, 2500.0 / survivors.size());
+            for (int i = 0; i < survivors.size(); i++) {
+                final int spoken = i + 1;
+                final Chip chip = survivors.get(i);
+                at = after(at + countInterval, () -> {
+                    applyCount(chip, spoken);
+                    punch(chip.label);
+                    sounds.play("tick");
+                    status.setText("Counting the survivors\u2026 " + spoken);
+                });
+            }
+            final int total = survivors.size();
+            at = after(at + 400, () -> status.setText(total
+                    + (total == 1 ? " letter stands." : " letters stand.")));
+        }
+
         at = after(at + 500, () -> {
             cancelBox.setVisible(false);
             cancelBox.setManaged(false);
             ringBox.setVisible(true);
             ringBox.setManaged(true);
         });
-
         List<Character> ring = new ArrayList<>(List.of('F', 'L', 'A', 'M', 'E', 'S'));
         int step = outcome.remainingCount() == 0
                 ? ring.size() : outcome.remainingCount();
@@ -246,6 +268,27 @@ public final class EliminationView extends VBox {
         return new Chip[]{first, second};
     }
 
+    private List<Chip> survivors() {
+        List<Chip> survivors = new ArrayList<>();
+        for (Chip chip : row1) {
+            if (!chip.taken) {
+                survivors.add(chip);
+            }
+        }
+        for (Chip chip : row2) {
+            if (!chip.taken) {
+                survivors.add(chip);
+            }
+        }
+        return survivors;
+    }
+
+    /** Marks a chip as counted survivor number n. */
+    private static void applyCount(Chip chip, int n) {
+        addStyle(chip.box, "chip-count");
+        chip.label.setAccessibleText("Counts as " + n + ".");
+    }
+
     private void showHop(Label tile) {
         if (lastHop != null) {
             lastHop.getStyleClass().remove("tile-hop");
@@ -295,6 +338,10 @@ public final class EliminationView extends VBox {
                 chip.slash.setEndY(36);
             }
         }
+        List<Chip> counted = survivors();
+        for (int i = 0; i < counted.size(); i++) {
+            applyCount(counted.get(i), i + 1);
+        }
         cancelBox.setVisible(false);
         cancelBox.setManaged(false);
         ringBox.setVisible(true);
@@ -331,9 +378,9 @@ public final class EliminationView extends VBox {
         punch.play();
     }
 
-    private static void addStyle(Label label, String style) {
-        if (!label.getStyleClass().contains(style)) {
-            label.getStyleClass().add(style);
+    private static void addStyle(javafx.scene.Node node, String style) {
+        if (!node.getStyleClass().contains(style)) {
+            node.getStyleClass().add(style);
         }
     }
 }

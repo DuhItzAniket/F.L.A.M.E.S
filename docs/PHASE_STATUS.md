@@ -172,3 +172,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   visibly crossed, like pen on paper — no more fading to invisible.
 - New `.chip-label`/`.slash` classes in both themes; `fadeOut` removed.
 - Verification: suite 31 → 32 green (chip-count test); live launch clean.
+
+## Phase 16 — Survivor count-up — COMPLETE
+
+- New stage between crossing and the ring: each surviving chip lights up
+  gold in order with a tick and a running counter
+  ("Counting the survivors… 3"), ending "N letters stand." Empty round
+  gets its own line. Skip jumps the counter straight to N.
+- Verification: suite stays 32 green; live launch log clean.

@@ -171,6 +171,10 @@
     -fx-text-fill: #75644E;
 }
 
+.chip-count {
+    -fx-border-color: #D9A441;
+}
+
 .slash {
     -fx-stroke: #C93A2E;
     -fx-stroke-width: 3;
