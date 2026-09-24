@@ -109,7 +109,7 @@ public final class MainApp extends Application {
         sounds.play("click");
         try {
             FlamesOutcome outcome = FlamesEngine.calculate(first, second);
-            EliminationView elimination = new EliminationView(outcome, () -> showResult(outcome));
+            EliminationView elimination = new EliminationView(outcome, sounds, () -> showResult(outcome));
             content.getChildren().setAll(elimination);
             elimination.play();
         } catch (IllegalArgumentException ex) {

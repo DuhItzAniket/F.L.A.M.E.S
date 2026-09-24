@@ -44,14 +44,50 @@ public final class FlamesEngine {
 
     /** Letters left after cross-cancellation of the two normalized names. */
     public static int remainingCount(String name1, String name2) {
-        Map<Integer, Integer> frequencies = new HashMap<>();
-        normalize(name1).codePoints().forEach(cp -> frequencies.merge(cp, 1, Integer::sum));
-        normalize(name2).codePoints().forEach(cp -> frequencies.merge(cp, -1, Integer::sum));
         int remaining = 0;
-        for (int diff : frequencies.values()) {
+        for (int diff : frequencies(normalize(name1), normalize(name2)).values()) {
             remaining += Math.abs(diff);
         }
         return remaining;
+    }
+
+    /**
+     * One entry per cancelled pair, in deterministic order: distinct shared
+     * letters by first appearance in the first name, each repeated as many
+     * times as it pairs up. The UI pops one pair per entry, so
+     * {@code size() == (len1 + len2 - remainingCount) / 2}.
+     * Non-BMP letters are counted but never listed (they cannot pair
+     * visually); this is documented, not silent.
+     */
+    public static List<Integer> cancellationOrder(String name1, String name2) {
+        String first = normalize(name1);
+        String second = normalize(name2);
+        // Shared letters by first appearance in the first name.
+        List<Integer> distinct = new ArrayList<>();
+        Map<Integer, Integer> left = new HashMap<>();
+        Map<Integer, Integer> right = new HashMap<>();
+        first.codePoints().forEach(cp -> left.merge(cp, 1, Integer::sum));
+        second.codePoints().forEach(cp -> right.merge(cp, 1, Integer::sum));
+        first.codePoints().filter(cp -> right.getOrDefault(cp, 0) > 0).forEach(cp -> {
+            if (!distinct.contains(cp)) {
+                distinct.add(cp);
+            }
+        });
+        List<Integer> pops = new ArrayList<>();
+        for (int cp : distinct) {
+            int pairs = Math.min(left.get(cp), right.get(cp));
+            for (int i = 0; i < pairs && cp <= 0xFFFF; i++) {
+                pops.add(cp);
+            }
+        }
+        return List.copyOf(pops);
+    }
+
+    private static Map<Integer, Integer> frequencies(String first, String second) {
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        first.codePoints().forEach(cp -> frequencies.merge(cp, 1, Integer::sum));
+        second.codePoints().forEach(cp -> frequencies.merge(cp, -1, Integer::sum));
+        return frequencies;
     }
 
     /**

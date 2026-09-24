@@ -10,12 +10,13 @@ no network calls.
 ## How it plays
 
 1. Type two names and hit **Reveal fate** (or Enter).
-2. Shared letters cancel out; the leftovers count around the
-   F·L·A·M·E·S tiles until one survives — click or press Enter to skip.
-3. The verdict appears with its meaning. **Change names** keeps your input,
+2. Shared letters cross out pair by pair before your eyes.
+3. The leftovers count around the F·L·A·M·E·S ring hop by hop, ticking as
+   they go, until one letter survives — click or press Enter to skip.
+4. The verdict appears with its meaning. **Change names** keeps your input,
    **Start over** clears it.
-4. The gear button (top right) holds settings: sound effects, volume,
-   and theme.
+5. The gear button (top right) holds settings: theme, sound effects,
+   and volume.
 
 Only letters count; case, spaces, punctuation, and digits are ignored.
 Names that cancel out completely (like identical names) wrap to one full

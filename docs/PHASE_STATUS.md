@@ -140,3 +140,17 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   persisted via `Settings`. Theme-parity test keeps both files' classes
   identical.
 - Verification: suite 27 → 29 green; live launch log clean.
+
+## Phase 13 — Step-by-step animation — COMPLETE
+
+- `FlamesEngine.cancellationOrder`: deterministic pair-pop sequence
+  (tested: john/jane → j,n; anna/anna → a,a,n,n; count relation holds).
+- `EliminationView` reworked into two stages, all driven by engine data:
+  letter chips cross out pair by pair with fades + counter, then the ring
+  is counted hop by hop (tick per hop, cadence auto-compresses for long
+  names) with punch-and-pop eliminations and a crowning pulse. Skip jumps
+  through the same silent appliers — one code path, no duplicated logic.
+- New `.chip`/`.tile-hop`/`.row-label` classes in both themes (parity
+  test holds). Tick/pop sounds wired to hops and falls.
+- Verification: suite 29 → 31 green; live launch log clean. Full
+  eyes-on motion check is yours via `run.bat`.

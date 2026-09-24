@@ -41,9 +41,14 @@ never color alone.
 
 ## Motion
 
-- Elimination step 500 ms; crowning pause 700 ms; handoff 900 ms.
-- No loops, no confetti, click anywhere skips. Every animated step also
-  writes a status sentence, so muting motion loses nothing.
+- Cancellation: shared-letter pairs fade out (280 ms) at up to 450 ms
+  cadence (compressed to fit 3 s for long names), counter narrates.
+- Counting: highlight hops the ring at up to 110 ms cadence (compressed
+  to fit 1.1 s per elimination), tick per hop; the landed tile punches
+  (scale 1.28) and pops.
+- Crowning pulse 320 ms; handoff 900 ms. Click/Enter/Space skips to the
+  verdict. Every step writes a status sentence, so muting motion (or
+  sound) loses nothing.
 
 ## Icon & assets
 

@@ -142,6 +142,27 @@ class FlamesEngineTest {
     }
 
     @Test
+    void cancellationOrderPairsSharedLettersDeterministically() {
+        assertEquals(List.of((int) 'j', (int) 'n'),
+                FlamesEngine.cancellationOrder("john", "jane"));
+        assertEquals(List.of((int) 'a', (int) 'a', (int) 'n', (int) 'n'),
+                FlamesEngine.cancellationOrder("anna", "anna"));
+        assertEquals(List.of(), FlamesEngine.cancellationOrder("abc", "def"));
+    }
+
+    @Test
+    void cancellationOrderMatchesRemainingCount() {
+        String[][] pairs = {{"romeo", "juliet"}, {"aabb", "ab"}, {"anna", "anna"}};
+        for (String[] pair : pairs) {
+            int len1 = FlamesEngine.normalize(pair[0]).length();
+            int len2 = FlamesEngine.normalize(pair[1]).length();
+            int count = FlamesEngine.remainingCount(pair[0], pair[1]);
+            assertEquals((len1 + len2 - count) / 2,
+                    FlamesEngine.cancellationOrder(pair[0], pair[1]).size());
+        }
+    }
+
+    @Test
     void everyCategoryResolvesFromItsLetter() {
         for (FlamesCategory category : FlamesCategory.values()) {
             assertEquals(category, FlamesCategory.fromLetter(category.letter()));

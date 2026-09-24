@@ -142,6 +142,41 @@
     -fx-text-fill: #75644E;
 }
 
+.row-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #75644E;
+}
+
+.chips {
+    -fx-alignment: center;
+}
+
+.chip {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2118;
+    -fx-background-color: #FFFDF6;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2B2118;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-min-width: 34px;
+    -fx-min-height: 40px;
+    -fx-alignment: center;
+}
+
+.chip-off {
+    -fx-text-fill: #75644E;
+    -fx-border-color: #75644E;
+    -fx-strikethrough: true;
+}
+
+.tile-hop {
+    -fx-border-color: #D9A441;
+    -fx-background-color: #F0D9A0;
+}
+
 .icon-btn {
     -fx-background-color: transparent;
     -fx-background-radius: 10px;

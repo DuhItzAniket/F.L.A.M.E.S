@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,16 @@ class ViewTest {
             Platform.startup(latch::countDown);
             assertTrue(latch.await(15, TimeUnit.SECONDS), "JavaFX toolkit did not start");
         }
+    }
+
+    @AfterAll
+    static void clearTestPrefs() throws Exception {
+        java.util.prefs.Preferences.userRoot().node("flames-viewtest").removeNode();
+    }
+
+    private static SoundBank testSounds() {
+        return new SoundBank(new Settings(
+                java.util.prefs.Preferences.userRoot().node("flames-viewtest")));
     }
 
     @FunctionalInterface
@@ -175,7 +186,7 @@ class ViewTest {
     void eliminationStartsWithSixTilesAndStatus() throws Exception {
         fx(() -> {
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("john", "jane"), () -> {
+                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
                     });
             List<Label> tiles = new ArrayList<>();
             collect(view.getChildren(), Label.class, tiles);
@@ -192,8 +203,9 @@ class ViewTest {
     void eliminationRejectsNonFlamesLetters() {
         FlamesOutcome bad = new FlamesOutcome(FlamesCategory.FRIENDS, 3,
                 List.of('F', 'L', 'X', 'M', 'E'), "a", "b");
-        assertThrows(IllegalArgumentException.class, () -> new EliminationView(bad, () -> {
-        }));
+        assertThrows(IllegalArgumentException.class,
+                () -> new EliminationView(bad, testSounds(), () -> {
+                }));
     }
 
     @Test
