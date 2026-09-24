@@ -141,3 +141,23 @@
     -fx-font-size: 13px;
     -fx-text-fill: #75644E;
 }
+
+.icon-btn {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 8px;
+    -fx-cursor: hand;
+}
+
+.icon-btn:hover {
+    -fx-background-color: #FFFDF6;
+}
+
+.gear-stroke {
+    -fx-stroke: #2B2118;
+    -fx-stroke-width: 3;
+}
+
+.gear-fill {
+    -fx-fill: #2B2118;
+}

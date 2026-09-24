@@ -109,7 +109,19 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Verification: `./mvnw.cmd -B clean verify` green (23/23); wrapper
   `mvnw` committed executable.
 
-## Manual-test launcher + font fix (this commit)
+## Phase 11 — Sound engine + settings foundation — COMPLETE
+
+- Synthesized SFX (`tools/SoundGenerator.java`, pure Java, zero deps):
+  click/tick/pop/error/fanfare WAVs in `assets/sound/`, headers verified.
+- `SoundBank` (null- and audio-safe `AudioClip` playback at user volume),
+  `Settings` (Preferences-backed theme/sound/volume, unit-tested),
+  gear button top-right opening `SettingsDialog` (sound toggle + volume,
+  live-applied and persisted). Click/error/fanfare wired in.
+- Feasibility answer: yes — `javafx-media` added; no new runtime deps.
+- Verification: suite 23 → 27 green; live `run.bat` launch shows no
+  CSS/media/startup errors.
+
+## Manual-test launcher + font fix — COMPLETE
 
 - `run.bat`: double-click launcher (JDK 21 preferred, `JAVA_HOME`
   respected, pauses with guidance on failure).

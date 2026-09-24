@@ -14,6 +14,8 @@ no network calls.
    F·L·A·M·E·S tiles until one survives — click or press Enter to skip.
 3. The verdict appears with its meaning. **Change names** keeps your input,
    **Start over** clears it.
+4. The gear button (top right) holds settings: sound effects, volume,
+   and theme.
 
 Only letters count; case, spaces, punctuation, and digits are ignored.
 Names that cancel out completely (like identical names) wrap to one full
