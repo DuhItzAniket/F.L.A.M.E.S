@@ -154,3 +154,13 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   test holds). Tick/pop sounds wired to hops and falls.
 - Verification: suite 29 → 31 green; live launch log clean. Full
   eyes-on motion check is yours via `run.bat`.
+
+## Phase 14 — Batch gate — COMPLETE
+
+- `mvn -B clean verify` green (31/31); working tree clean; history is
+  one phase per commit, all pushed.
+- Hop-index math re-checked against the engine's Josephus loop
+  (landed tile == removed index, index carries across eliminations).
+- Standing limitation, stated plainly: eyes-on verification of motion,
+  theme look, and sound is yours — `run.bat`, gear button, try
+  "romeo"/"juliet", then flip to dark + mute in settings.
