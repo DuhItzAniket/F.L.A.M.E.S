@@ -15,21 +15,22 @@ supported launch paths are below.
 Requires JDK 21 + Maven 3.9+:
 
 ```sh
-mvn javafx:run
+./mvnw javafx:run
 ```
 
 ## Versioned jar (verified)
 
 ```sh
-mvn -B verify   # runs tests, produces target/flames-<version>.jar
+./mvnw -B verify   # runs tests, produces target/flames-<version>.jar
 ```
 
 ## Windows installer (not yet verified here — needs WiX on the build machine)
 
 ```sh
-mvn -B -DskipTests package
+./mvnw -B -DskipTests package
+mkdir app-input && cp target/flames-1.0.0.jar app-input/
 jpackage --type exe --name F.L.A.M.E.S --app-version 1.0.0 \
-  --input target --main-jar flames-1.0.0.jar \
+  --input app-input --main-jar flames-1.0.0.jar \
   --main-class flames.MainApp --icon src/main/resources/assets/icon/flames.ico \
   --win-menu --win-shortcut
 ```

@@ -1,5 +1,8 @@
 package flames;
 
+import java.io.InputStream;
+import java.net.URL;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,13 +27,18 @@ public final class MainApp extends Application {
         root.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(root, 640, 560);
-        scene.getStylesheets().add(getClass().getResource("/assets/flames.css").toExternalForm());
+        URL css = getClass().getResource("/assets/flames.css");
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        }
 
         stage.setTitle("F.L.A.M.E.S");
-        stage.getIcons().addAll(
-                new Image(getClass().getResourceAsStream("/assets/icon/icon-16.png")),
-                new Image(getClass().getResourceAsStream("/assets/icon/icon-32.png")),
-                new Image(getClass().getResourceAsStream("/assets/icon/icon-48.png")));
+        for (String size : new String[]{"16", "32", "48"}) {
+            InputStream icon = getClass().getResourceAsStream("/assets/icon/icon-" + size + ".png");
+            if (icon != null) {
+                stage.getIcons().add(new Image(icon));
+            }
+        }
         stage.setMinWidth(480);
         stage.setMinHeight(540);
         stage.setScene(scene);

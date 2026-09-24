@@ -94,3 +94,17 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Known limitation carried honestly: the on-display walkthrough
   (launch → calculate → animation → verdict → replay) needs a machine with
   a display; headless CI covers compile + the full engine suite.
+
+## Hardening pass (post-1.0.0 deep scan) — COMPLETE (this series)
+
+- Two review agents + maintainer audit found 20+ issues; all fixed:
+  fail-fast resource/icon loading, elimination-order validation, narration
+  off-by-one (`4 remain` → `5 remain`), deferred focus requests, wrapped +
+  centered result text, codepoint-accurate field cap, single-family CSS
+  (JavaFX ignores fallback lists), jar manifest, CI `clean verify` +
+  artifact guard, staged `jpackage` input, doc/code reality sync.
+- Former skips finished: bundled Gentium Book Plus (OFL, validated TTFs)
+  for display type; Maven wrapper bootstrapping 3.9.9 (CI uses `./mvnw`);
+  7 headless view tests via Monocle — suite now 23/23 green.
+- Verification: `./mvnw.cmd -B clean verify` green (23/23); wrapper
+  `mvnw` committed executable.

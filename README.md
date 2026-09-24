@@ -21,11 +21,12 @@ counting cycle.
 
 ## Run it
 
-Requires JDK 21 (LTS) + Maven 3.9+:
+Requires JDK 21 (LTS). The Maven wrapper bootstraps Maven 3.9.9 itself —
+no preinstalled Maven needed:
 
 ```sh
-mvn javafx:run      # launch the app (needs a display)
-mvn verify          # compile + full test suite (headless-safe)
+./mvnw javafx:run      # launch the app (needs a display; mvnw.cmd on Windows)
+./mvnw verify          # compile + full test suite (headless-safe)
 ```
 
 ## Under the hood
@@ -44,7 +45,7 @@ mvn verify          # compile + full test suite (headless-safe)
 pom.xml                            # pinned: JavaFX 21.0.4, JUnit 5.11.4
 src/main/java/flames/              # engine + views + entry point
 src/main/resources/assets/         # flames.css, icon/ (PNGs + ICO)
-src/test/java/flames/              # 16 JUnit tests
+src/test/java/flames/      # 16 engine tests + 7 headless view tests
 tools/IconGenerator.java           # artwork source (pure Java2D)
 docs/                              # plan, architecture, design, testing,
                                    # phase status, releasing
@@ -62,7 +63,8 @@ docs/                              # plan, architecture, design, testing,
 
 ## Status & license
 
-All phases 0–9 complete; `1.0.0` ships at the Phase 10 gate
-(see `docs/PHASE_STATUS.md` for the verification log, including the one
-check that needs a display: the on-screen UI walkthrough).
+All phases 0–10 complete; `1.0.0` tagged `v1.0.0`, followed by a deep-scan
+hardening pass (bundled font, Maven wrapper, headless view tests —
+see `docs/PHASE_STATUS.md`). The one check that needs a display is the
+on-screen walkthrough; everything else is CI-verified.
 License: to be chosen by the repository owner.

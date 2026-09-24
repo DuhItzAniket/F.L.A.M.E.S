@@ -2,6 +2,7 @@ package flames;
 
 import java.util.function.BiConsumer;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -47,18 +48,19 @@ public final class InputView extends VBox {
         styleField(secondName, "e.g. Juliet", "Second name — only letters count, the rest is ignored");
 
         error.getStyleClass().add("error");
+        error.setWrapText(true);
         error.setVisible(false);
         error.setManaged(false);
 
         Button calculate = new Button("Reveal fate");
         calculate.getStyleClass().add("btn-primary");
         calculate.setDefaultButton(true);
-        calculate.setTooltip(new javafx.scene.control.Tooltip("Calculate the FLAMES verdict (Enter)"));
+        calculate.setTooltip(new Tooltip("Calculate the FLAMES verdict (Enter)"));
         calculate.setOnAction(e -> onCalculate.accept(firstName.getText(), secondName.getText()));
 
         Button clear = new Button("Clear");
         clear.getStyleClass().add("btn-ghost");
-        clear.setTooltip(new javafx.scene.control.Tooltip("Empty both name fields"));
+        clear.setTooltip(new Tooltip("Empty both name fields"));
         clear.setOnAction(e -> {
             firstName.clear();
             secondName.clear();
@@ -89,16 +91,18 @@ public final class InputView extends VBox {
     }
 
     public void focusFirst() {
-        firstName.requestFocus();
+        Platform.runLater(firstName::requestFocus);
     }
 
     private void styleField(TextField field, String prompt, String tip) {
         field.setPromptText(prompt);
         field.setTooltip(new Tooltip(tip));
         field.getStyleClass().add("field");
-        // ponytail: 50-char cap — names longer than this never change the verdict
-        field.setTextFormatter(new TextFormatter<String>(change ->
-                change.getControlNewText().length() <= 50 ? change : null));
+        // ponytail: 50-codepoint cap — names longer than this never change the verdict
+        field.setTextFormatter(new TextFormatter<String>(change -> {
+            String next = change.getControlNewText();
+            return next.codePointCount(0, next.length()) <= 50 ? change : null;
+        }));
         field.textProperty().addListener((obs, old, value) -> showError(null));
     }
 }

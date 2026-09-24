@@ -18,5 +18,8 @@ Key decisions:
 - A remaining count of 0 (fully cancelling names, e.g. identical) wraps to
   one full 6-cycle instead of special-casing a winner. Deterministic,
   covered by test.
-- No `module-info.java` yet: the `javafx-maven-plugin` resolves modules at
-  runtime; a module descriptor arrives with packaging (Phase 8) if needed.
+- No `module-info.java` by decision: the app ships via `javafx-maven-plugin`
+  (dev) and a `jpackage` command over the plain jar (release). A module
+  descriptor would add friction with zero benefit at this size; the
+  `maven-jar-plugin` manifest (`Main-Class` + classpath) is as far as the
+  jar needs to go.

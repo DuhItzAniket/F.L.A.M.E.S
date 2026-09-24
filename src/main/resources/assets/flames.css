@@ -1,12 +1,24 @@
-/* F.L.A.M.E.S — "ember notebook" theme. Warm paper, ink text, ember accent. */
+/* F.L.A.M.E.S — "ember notebook" theme. Warm paper, ink text, ember accent.
+   Display type is bundled Gentium Book Plus (OFL, see fonts/OFL.txt);
+   UI type is the platform default. JavaFX takes one family per rule. */
+
+@font-face {
+    font-family: 'Gentium Book Plus';
+    src: url('fonts/GentiumBookPlus-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Gentium Book Plus';
+    src: url('fonts/GentiumBookPlus-Bold.ttf');
+    font-weight: bold;
+}
 
 .root {
     -fx-background-color: #F7F0E1;
-    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 .title {
-    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-family: 'Gentium Book Plus';
     -fx-font-size: 46px;
     -fx-font-weight: bold;
     -fx-text-fill: #2B2118;
@@ -80,13 +92,13 @@
 }
 
 .names {
-    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-family: 'Gentium Book Plus';
     -fx-font-size: 22px;
     -fx-text-fill: #2B2118;
 }
 
 .word {
-    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-family: 'Gentium Book Plus';
     -fx-font-size: 64px;
     -fx-font-weight: bold;
     -fx-text-fill: #A02A22;
@@ -105,7 +117,7 @@
 }
 
 .tile {
-    -fx-font-family: Georgia, "Times New Roman", serif;
+    -fx-font-family: 'Gentium Book Plus';
     -fx-font-size: 30px;
     -fx-font-weight: bold;
     -fx-text-fill: #2B2118;

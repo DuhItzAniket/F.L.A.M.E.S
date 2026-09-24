@@ -30,8 +30,13 @@ public final class IconGenerator {
     private static final Color GOLD = new Color(0xE8, 0xB5, 0x4A);
 
     public static void main(String[] args) throws Exception {
-        File out = new File(args.length > 0 ? args[0] : "icon");
-        out.mkdirs();
+        if (args.length != 1) {
+            throw new IllegalArgumentException("usage: IconGenerator <output-dir>");
+        }
+        File out = new File(args[0]);
+        if (!out.isDirectory() && !out.mkdirs()) {
+            throw new java.io.IOException("cannot create " + out);
+        }
         int[] sizes = {16, 32, 48, 128, 256};
         List<byte[]> pngs = new ArrayList<>();
         for (int size : sizes) {
@@ -87,7 +92,7 @@ public final class IconGenerator {
         return Math.round(100.0 * opaque / total);
     }
 
-    /** Minimal PNG-compressed .ico writer (16/32/48/256). */
+    /** Minimal PNG-compressed .ico writer (16/32/48/128/256). */
     private static void writeIco(File file, int[] sizes, List<byte[]> pngs) throws Exception {
         try (DataOutputStream out = new DataOutputStream(new FileOutputStream(file))) {
             writeShortLE(out, 0); // reserved

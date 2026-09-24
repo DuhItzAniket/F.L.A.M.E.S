@@ -16,8 +16,9 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - run: mvn -B verify
+      - run: ./mvnw -B clean verify
       - uses: actions/upload-artifact@v4
         with:
           name: flames-jar
           path: target/flames-*.jar
+          if-no-files-found: error

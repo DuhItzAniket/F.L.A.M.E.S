@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -33,6 +34,11 @@ public final class EliminationView extends VBox {
         super(16);
         this.outcome = outcome;
         this.onDone = onDone;
+        for (char removed : outcome.eliminationOrder()) {
+            if ("FLAMES".indexOf(removed) < 0) {
+                throw new IllegalArgumentException("Not a FLAMES letter: " + removed);
+            }
+        }
         setAlignment(Pos.CENTER);
         setPadding(new Insets(32));
 
@@ -74,14 +80,17 @@ public final class EliminationView extends VBox {
 
     /** Starts the elimination sequence. Safe to call once the view is shown. */
     public void play() {
-        requestFocus();
+        if (finished) {
+            return;
+        }
+        Platform.runLater(this::requestFocus);
         timeline = new Timeline();
         var order = outcome.eliminationOrder();
         for (int i = 0; i < order.size(); i++) {
             final int step = i;
             timeline.getKeyFrames().add(new KeyFrame(
                     Duration.millis(STEP_MS * (step + 1)),
-                    e -> strike(order.get(step), order.size() - step - 1)));
+                    e -> strike(order.get(step), order.size() - step)));
         }
         timeline.getKeyFrames().add(new KeyFrame(
                 Duration.millis(STEP_MS * order.size() + 700),
@@ -120,7 +129,7 @@ public final class EliminationView extends VBox {
         }
         var order = outcome.eliminationOrder();
         for (int i = 0; i < order.size(); i++) {
-            strike(order.get(i), order.size() - i - 1);
+            strike(order.get(i), order.size() - i);
         }
         crown();
         onDone.run();

@@ -24,10 +24,14 @@ never color alone.
 
 ## Typography
 
-- Display: Georgia / Times New Roman, serif — title 46, verdict word 64,
-  names line 22. The wordmark *is* the logo type.
-- UI: Segoe UI / Helvetica Neue / Arial — labels 14, fields 16, buttons 15,
-  status 15, hints 13. No bundled fonts: always available, always offline.
+- Display: bundled **Gentium Book Plus** (SIL OFL — TTFs + license in
+  `assets/fonts/`), wired via `@font-face` — title 46, verdict word 64,
+  names line 22, tiles 30. Same look on every machine, still fully offline.
+  (JavaFX accepts one family per `-fx-font-family` rule, so there are no
+  fallback lists; if the bundled font ever fails to load, the platform
+  default renders instead.)
+- UI: platform default sans — labels 14, fields 16, buttons 15, status 15,
+  hints 13. Always available, always offline.
 
 ## Spacing, shape, depth
 

@@ -13,9 +13,9 @@ no tracking — fully offline, names never leave the machine.
 - Local clone `F.L.A.M.E.S/` was **empty** (no source, build files, docs, assets).
 - GitHub repo `DuhItzAniket/F.L.A.M.E.S` exists but is **empty**.
 - No build system, no framework, no tests, no license, no CI.
-- Toolchain found: JDK 21 LTS (Temurin, `~/.jdks/jdk21`), default JDK 26
-  (too new — not used), no system Maven/Gradle (Maven 3.9.9 bootstrapped
-  manually for development), Maven Central + GitHub reachable.
+- Toolchain found: JDK 21 LTS plus a system JDK 26 (unused — too new).
+  No system Maven/Gradle at the time, so the Maven wrapper (`mvnw`) pins
+  and bootstraps Maven 3.9.9; Maven Central + GitHub reachable.
 - A stray `.git` exists in the Windows home directory with no commits; it is
   **not** this project and is left untouched. This project has its own `.git`.
 - Tech debt: none (greenfield). License: none yet — owner to choose (suggest MIT).
@@ -27,9 +27,9 @@ no tracking — fully offline, names never leave the machine.
 | Language | Java 21 LTS | Modern LTS; JavaFX 21 targets it |
 | UI | JavaFX 21.0.4 (`org.openjfx`) | Visually rich desktop UI, CSS styling; owner's choice |
 | Build | Maven 3.9.9, plugins pinned in `pom.xml` | Standard layout, reproducible, CI-friendly |
-| Tests | JUnit 5.11.4 (via `junit-bom`) | Standard unit testing |
+| Tests | JUnit 5.11.4 (via `junit-jupiter`) + Monocle headless views | Standard unit testing, UI tests without a display |
 | CI | GitHub Actions, Ubuntu + Temurin 21 | `mvn -B verify` on push/PR |
-| Assets | SVG sources, PNG icon variants | Maintainable, scalable |
+| Assets | Generated PNG/ICO from `tools/IconGenerator.java` (pure Java2D) | Maintainable, no downloads, no licensing risk |
 | Packaging (later) | `javafx-maven-plugin` 0.0.8 now; `jpackage` in Phase 8 | Defer native installers until UI is done |
 
 Non-goals: no new dependencies beyond JavaFX/JUnit; no network code;

@@ -1,4 +1,7 @@
 target/
+mk/
+*.exe
+*.msi
 .classpath
 .project
 .settings/

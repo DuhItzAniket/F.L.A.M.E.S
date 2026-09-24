@@ -15,12 +15,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
-    <javafx.version>21.0.4</javafx.version>
+    <javafx.version>21.0.2</javafx.version>
     <junit.version>5.11.4</junit.version>
+    <monocle.version>21.0.2</monocle.version>
     <mainClass>flames.MainApp</mainClass>
   </properties>
 
   <dependencies>
+    <!-- Note: org.openjfx poms print benign "duplicate profile activation"
+         warnings during resolution; the correct platform jars are selected. -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
@@ -30,6 +33,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>openjfx-monocle</artifactId>
+      <version>${monocle.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -45,6 +54,29 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.2</version>
+        <configuration>
+          <!-- Headless Glass so view tests run on CI and dev machines alike. -->
+          <systemPropertyVariables>
+            <glass.platform>Monocle</glass.platform>
+            <monocle.platform>Headless</monocle.platform>
+            <prism.order>sw</prism.order>
+            <prism.text>t2k</prism.text>
+            <java.awt.headless>true</java.awt.headless>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>flames.MainApp</mainClass>
+              <addClasspath>true</addClasspath>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.openjfx</groupId>
