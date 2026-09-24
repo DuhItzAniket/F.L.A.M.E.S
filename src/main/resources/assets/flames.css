@@ -1,17 +1,5 @@
-/* F.L.A.M.E.S — "ember notebook" theme. Warm paper, ink text, ember accent.
-   Display type is bundled Gentium Book Plus (OFL, see fonts/OFL.txt);
-   UI type is the platform default. JavaFX takes one family per rule. */
-
-@font-face {
-    font-family: 'Gentium Book Plus';
-    src: url('fonts/GentiumBookPlus-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Gentium Book Plus';
-    src: url('fonts/GentiumBookPlus-Bold.ttf');
-    font-weight: bold;
-}
+/* Display type 'Gentium Book Plus' is loaded in code (MainApp.loadFonts);
+   @font-face cannot express its bold face, so CSS only names the family. */
 
 .root {
     -fx-background-color: #F7F0E1;

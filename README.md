@@ -29,6 +29,9 @@ no preinstalled Maven needed:
 ./mvnw verify          # compile + full test suite (headless-safe)
 ```
 
+Windows manual test shortcut: double-click **`run.bat`** (uses JDK 21 if
+present, otherwise your `JAVA_HOME`).
+
 ## Under the hood
 
 - `FlamesEngine` — pure-Java game logic (normalize → cancel → eliminate),

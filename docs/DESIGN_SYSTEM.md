@@ -25,11 +25,11 @@ never color alone.
 ## Typography
 
 - Display: bundled **Gentium Book Plus** (SIL OFL — TTFs + license in
-  `assets/fonts/`), wired via `@font-face` — title 46, verdict word 64,
-  names line 22, tiles 30. Same look on every machine, still fully offline.
-  (JavaFX accepts one family per `-fx-font-family` rule, so there are no
-  fallback lists; if the bundled font ever fails to load, the platform
-  default renders instead.)
+  `assets/fonts/`), registered in code by `MainApp` — title 46, verdict
+  word 64, names line 22, tiles 30. Same look on every machine, still
+  fully offline. (JavaFX `@font-face` cannot express the bold face and its
+  parser rejects the descriptor, so CSS only names the family; if loading
+  ever fails, the platform default renders instead.)
 - UI: platform default sans — labels 14, fields 16, buttons 15, status 15,
   hints 13. Always available, always offline.
 

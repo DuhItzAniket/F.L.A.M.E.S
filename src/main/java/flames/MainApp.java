@@ -1,5 +1,6 @@
 package flames;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -8,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -21,6 +23,7 @@ public final class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
+        loadFonts();
         inputView = new InputView(this::calculate);
 
         root = new StackPane(inputView);
@@ -44,6 +47,22 @@ public final class MainApp extends Application {
         stage.setScene(scene);
         stage.show();
         inputView.focusFirst();
+    }
+
+    /**
+     * Registers the bundled display faces. If anything is missing the UI
+     * simply renders in the platform default — fonts are branding, not logic.
+     */
+    private static void loadFonts() {
+        for (String file : new String[]{"GentiumBookPlus-Regular.ttf", "GentiumBookPlus-Bold.ttf"}) {
+            try (InputStream in = MainApp.class.getResourceAsStream("/assets/fonts/" + file)) {
+                if (in != null) {
+                    Font.loadFont(in, 16);
+                }
+            } catch (IOException ignored) {
+                // fall back to the platform default font
+            }
+        }
     }
 
     private void calculate(String first, String second) {

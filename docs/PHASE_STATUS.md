@@ -108,3 +108,14 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   7 headless view tests via Monocle — suite now 23/23 green.
 - Verification: `./mvnw.cmd -B clean verify` green (23/23); wrapper
   `mvnw` committed executable.
+
+## Manual-test launcher + font fix (this commit)
+
+- `run.bat`: double-click launcher (JDK 21 preferred, `JAVA_HOME`
+  respected, pauses with guidance on failure).
+- Live-launch testing caught a real bug: JavaFX's CSS parser rejects
+  `font-weight` inside `@font-face`, so the bundled faces are registered
+  in `MainApp` instead and CSS only names the family. Launch log shows
+  zero CSS/startup errors with the app running.
+- Verification: two live `run.bat` launches observed clean; `mvn -B verify`
+  green (23/23).
