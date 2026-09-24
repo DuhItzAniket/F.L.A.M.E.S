@@ -188,3 +188,16 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   never jumps). Same pen language as the crossing stage.
 - Inner-label styling via `.tile-label` + descendant rules in both themes.
 - Verification: suite stays 32 green; live launch log clean.
+
+## Phase 18 — Gate + deep scan — COMPLETE
+
+- Agentic deep scan (code + resources/docs) found one P0: skipping
+  mid-animation re-ran cancellation and threw, stranding the UI.
+  Fixed by resuming (recorded pairs) instead of restarting, with a
+  regression test (skip-right-after-play). Also fixed: orphaned
+  transitions stopped on skip, null/shape guards, kill-order tripwire,
+  astral-correct chip total, slash jitter (`managed=false` + offsets),
+  key-event consume, letter-preserving screen-reader text — plus a full
+  doc-sync pass (counts, phases, assets, motion).
+- Verification: suite 32 → 34 green; clean verify; live launch log
+  clean; tree clean; pushed.

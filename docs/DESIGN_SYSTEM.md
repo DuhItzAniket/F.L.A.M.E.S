@@ -36,13 +36,15 @@ never color alone.
 ## Spacing, shape, depth
 
 - Scale: 8 · 12 · 16 · 24 · 32. View padding 32, view gaps 12–16, tiles gap 10.
-- Radius 10 everywhere (CSS `-fx-background-radius` + `-fx-border-radius`).
+- Radius 10 everywhere except chips at 8.
 - One shadow only: focused field glows gold. Nothing else floats.
 
 ## Motion
 
-- Cancellation: shared-letter pairs fade out (280 ms) at up to 450 ms
-  cadence (compressed to fit 3 s for long names), counter narrates.
+- Cancellation: shared-letter pairs get a 240 ms pen slash and stay
+  visibly crossed, at up to 450 ms cadence (compressed to fit 3 s).
+- Count-up: survivors light gold in order with a tick and a running
+  counter, at up to 300 ms cadence.
 - Counting: highlight hops the ring at up to 110 ms cadence (compressed
   to fit 1.1 s per elimination), tick per hop.
 - Send-off: pen slash draws (240 ms), tile shakes (220 ms), then drops
@@ -59,5 +61,6 @@ never color alone.
   Generated files are checked in under `src/main/resources/assets/icon/`:
   `icon-16/32/48/128/256.png` + `flames.ico` (PNG-compressed, 5 images).
 - Window icons: 16/32/48. In-app logo: 128 on the input view.
-- Styling: `src/main/resources/assets/flames.css`. Every asset is referenced
-  by the app; there are no spare graphics.
+- Styling: `src/main/resources/assets/flames.css` (light) and
+  `flames-dark.css` (dark). Every asset is referenced by the app except
+  `icon-256.png` (kept as the HiDPI spare inside `flames.ico`).

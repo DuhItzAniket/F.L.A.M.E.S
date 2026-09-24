@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -48,6 +50,9 @@ public final class EliminationView extends VBox {
             this.slash = new Line(0, 0, 0, 0);
             this.slash.getStyleClass().add("slash");
             this.slash.setVisible(false);
+            this.slash.setManaged(false);
+            this.slash.setLayoutX(5);
+            this.slash.setLayoutY(5);
             this.box = new StackPane(label, slash);
             this.box.getStyleClass().add("chip");
             this.box.setMinSize(40, 46);
@@ -67,6 +72,9 @@ public final class EliminationView extends VBox {
             this.slash = new Line(0, 0, 0, 0);
             this.slash.getStyleClass().add("slash");
             this.slash.setVisible(false);
+            this.slash.setManaged(false);
+            this.slash.setLayoutX(6);
+            this.slash.setLayoutY(6);
             this.box = new StackPane(label, slash);
             this.box.getStyleClass().add("tile");
             this.box.setMinSize(58, 66);
@@ -85,15 +93,23 @@ public final class EliminationView extends VBox {
     private final List<Integer> pops;
     private final int chipTotal;
     private final Map<Character, Tile> tiles = new HashMap<>();
+    private final List<Chip[]> appliedPairs = new ArrayList<>();
+    private final List<Animation> running = new ArrayList<>();
     private Tile lastHop;
     private Timeline timeline;
     private boolean finished;
 
     public EliminationView(FlamesOutcome outcome, SoundBank sounds, Runnable onDone) {
         super(16);
-        this.outcome = outcome;
-        this.sounds = sounds;
-        this.onDone = onDone;
+        this.outcome = Objects.requireNonNull(outcome, "outcome");
+        this.sounds = Objects.requireNonNull(sounds, "sounds");
+        this.onDone = Objects.requireNonNull(onDone, "onDone");
+        Objects.requireNonNull(outcome.displayName1(), "displayName1");
+        Objects.requireNonNull(outcome.displayName2(), "displayName2");
+        if (outcome.eliminationOrder().size() != 5) {
+            throw new IllegalArgumentException("Elimination order must remove exactly 5, was "
+                    + outcome.eliminationOrder().size());
+        }
         for (char removed : outcome.eliminationOrder()) {
             if ("FLAMES".indexOf(removed) < 0) {
                 throw new IllegalArgumentException("Not a FLAMES letter: " + removed);
@@ -107,9 +123,9 @@ public final class EliminationView extends VBox {
 
         pops = FlamesEngine.cancellationOrder(
                 outcome.displayName1(), outcome.displayName2());
-        chipTotal = pops.size() * 2 + outcome.remainingCount();
         buildChips(row1, outcome.displayName1());
         buildChips(row2, outcome.displayName2());
+        chipTotal = row1.size() + row2.size();
         cancelBox.setAlignment(Pos.CENTER);
         cancelBox.getChildren().addAll(
                 chipRow(outcome.displayName1(), row1),
@@ -138,7 +154,10 @@ public final class EliminationView extends VBox {
         setOnMouseClicked(e -> finish());
         setOnKeyPressed(e -> {
             switch (e.getCode()) {
-                case ENTER, SPACE -> finish();
+                case ENTER, SPACE -> {
+                    e.consume();
+                    finish();
+                }
                 default -> {
                 }
             }
@@ -220,6 +239,10 @@ public final class EliminationView extends VBox {
             }
             index = (index + step - 1) % ring.size();
             final char fallen = ring.remove(index);
+            if (fallen != order.get(e)) {
+                throw new IllegalStateException(
+                        "Animated kill order diverged from the engine: " + fallen);
+            }
             final int left = ring.size();
             at = after(at + 260, () -> {
                 prepareStrike(fallen, left);
@@ -279,20 +302,23 @@ public final class EliminationView extends VBox {
         throw new IllegalStateException("No chip left for " + codePoint);
     }
 
-    /** Marks the k-th pair crossed out; returns it for animation. */
+    /** Marks the k-th pair crossed out; records it for the skip path. */
     private Chip[] prepareCancel(int k) {
         int cp = pops.get(k);
         Chip first = take(row1, cp);
         Chip second = take(row2, cp);
         int left = chipTotal - 2 * (k + 1);
+        String letter = new String(Character.toChars(cp));
         for (Chip chip : new Chip[]{first, second}) {
             addStyle(chip.label, "chip-off");
-            chip.label.setAccessibleText("Crossed out.");
+            chip.label.setAccessibleText(letter + ", crossed out.");
         }
         status.setText(left == 0
                 ? "Every letter cancelled out."
                 : left + (left == 1 ? " letter remains." : " letters remain."));
-        return new Chip[]{first, second};
+        Chip[] pair = new Chip[]{first, second};
+        appliedPairs.add(pair);
+        return pair;
     }
 
     private List<Chip> survivors() {
@@ -313,7 +339,8 @@ public final class EliminationView extends VBox {
     /** Marks a chip as counted survivor number n. */
     private static void applyCount(Chip chip, int n) {
         addStyle(chip.box, "chip-count");
-        chip.label.setAccessibleText("Counts as " + n + ".");
+        chip.label.setAccessibleText(
+                new String(Character.toChars(chip.codePoint)) + ", counts as " + n + ".");
     }
 
     private void showHop(Tile tile) {
@@ -351,7 +378,8 @@ public final class EliminationView extends VBox {
         status.setText(winner + " stands alone.");
     }
 
-    private void finish() {
+    /** Skip entry: finishes instantly with the same end states. Package-visible for tests. */
+    void finish() {
         if (finished) {
             return;
         }
@@ -359,8 +387,12 @@ public final class EliminationView extends VBox {
         if (timeline != null) {
             timeline.stop();
         }
-        for (int k = 0; k < pops.size(); k++) {
-            for (Chip chip : prepareCancel(k)) {
+        running.forEach(Animation::stop);
+        for (int k = appliedPairs.size(); k < pops.size(); k++) {
+            prepareCancel(k);
+        }
+        for (Chip[] pair : appliedPairs) {
+            for (Chip chip : pair) {
                 chip.slash.setVisible(true);
                 chip.slash.setEndX(30);
                 chip.slash.setEndY(36);
@@ -390,7 +422,7 @@ public final class EliminationView extends VBox {
     }
 
     /** Draws a pen slash across a chip or tile. */
-    private static void drawSlash(Line slash, double endX, double endY) {
+    private void drawSlash(Line slash, double endX, double endY) {
         slash.setVisible(true);
         Timeline draw = new Timeline(
                 new KeyFrame(Duration.ZERO,
@@ -399,34 +431,39 @@ public final class EliminationView extends VBox {
                 new KeyFrame(Duration.millis(240),
                         new KeyValue(slash.endXProperty(), endX),
                         new KeyValue(slash.endYProperty(), endY)));
+        running.add(draw);
         draw.play();
     }
 
     /** Startled wiggle before the fall. */
-    private static void shake(StackPane box) {
+    private void shake(StackPane box) {
         TranslateTransition shake = new TranslateTransition(Duration.millis(110), box);
         shake.setByX(6);
         shake.setCycleCount(2);
         shake.setAutoReverse(true);
+        running.add(shake);
         shake.play();
     }
 
     /** The send-off: tile drops away and vanishes, slot kept for layout. */
-    private static void dropTile(StackPane box) {
+    private void dropTile(StackPane box) {
         FadeTransition fade = new FadeTransition(Duration.millis(300), box);
         fade.setToValue(0);
+        running.add(fade);
         fade.play();
         TranslateTransition drop = new TranslateTransition(Duration.millis(300), box);
         drop.setByY(46);
+        running.add(drop);
         drop.play();
     }
 
-    private static void punch(Node node) {
+    private void punch(Node node) {
         ScaleTransition punch = new ScaleTransition(Duration.millis(320), node);
         punch.setToX(1.28);
         punch.setToY(1.28);
         punch.setCycleCount(2);
         punch.setAutoReverse(true);
+        running.add(punch);
         punch.play();
     }
 

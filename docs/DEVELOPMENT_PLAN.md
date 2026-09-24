@@ -29,7 +29,7 @@ no tracking — fully offline, names never leave the machine.
 | Build | Maven 3.9.9, plugins pinned in `pom.xml` | Standard layout, reproducible, CI-friendly |
 | Tests | JUnit 5.11.4 (via `junit-jupiter`) + Monocle headless views | Standard unit testing, UI tests without a display |
 | CI | GitHub Actions, Ubuntu + Temurin 21 | `mvn -B verify` on push/PR |
-| Assets | Generated PNG/ICO from `tools/IconGenerator.java` (pure Java2D) | Maintainable, no downloads, no licensing risk |
+| Assets | Generated PNG/ICO from `tools/IconGenerator.java` (pure Java2D), synthesized WAVs from `tools/SoundGenerator.java` | Maintainable, no downloads, no licensing risk |
 | Packaging (later) | `javafx-maven-plugin` 0.0.8 now; `jpackage` in Phase 8 | Defer native installers until UI is done |
 
 Non-goals: no new dependencies beyond JavaFX/JUnit; no network code;
@@ -38,15 +38,25 @@ no analytics/telemetry.
 ## 4. Architecture proposal
 
 ```
-flames/                  # single small package; split only when it hurts
+flames/                  # engine, categories, outcome, views, settings, sounds
   FlamesEngine.java      # pure domain: normalize → count → eliminate (no JavaFX)
   FlamesCategory.java    # enum F/L/A/M/E/S + titles + meanings
   FlamesOutcome.java     # record: category, count, elimination order, display names
+  InputView.java         # name-entry form with inline errors
+  EliminationView.java   # staged animation replaying engine data (no JavaFX in engine)
+  ResultView.java        # verdict moment
+  Settings.java          # persisted preferences (theme, sound, volume)
+  SoundBank.java         # bundled WAV effects, audio-safe playback
+  SettingsDialog.java    # gear-button dialog
   MainApp.java           # JavaFX entry point (presentation only, thin)
 ```
 
 Rules: domain never imports JavaFX (testable headless); animation replays the
 engine's elimination order — never a duplicate algorithm; UI stays thin.
+
+> Historical note: this plan was written at Phase 0 for phases 0–10.
+> Phases 11–17 (sound, themes, animation rework, `run.bat`) are logged in
+> `docs/PHASE_STATUS.md`, which is the running record.
 
 ## 5. Phase breakdown
 

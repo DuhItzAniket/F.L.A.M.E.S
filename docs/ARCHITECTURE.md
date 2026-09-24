@@ -5,8 +5,11 @@ dependency direction:
 
 - **Domain** — `FlamesEngine`, `FlamesCategory`, `FlamesOutcome`.
   Pure Java, zero JavaFX imports. All game rules live here and only here.
-- **Presentation** — `MainApp` (+ Phase 3 views). Thin: reads input, calls
-  the engine, renders the outcome. Never reimplements elimination.
+- **Presentation** — `MainApp` + `InputView`, `ResultView`,
+  `EliminationView` (staged animation), `SettingsDialog`, `SoundBank`.
+  Thin: reads input, calls the engine, renders the outcome. Never
+  reimplements elimination (the view re-simulates the ring only to place
+  hop highlights, with a tripwire asserting the kill order matches).
 - **Infrastructure** — Maven build, CI workflow, (Phase 8) packaging.
 
 Key decisions:

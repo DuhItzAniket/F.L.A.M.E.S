@@ -10,12 +10,14 @@ no network calls.
 ## How it plays
 
 1. Type two names and hit **Reveal fate** (or Enter).
-2. Shared letters cross out pair by pair before your eyes.
-3. The leftovers count around the F·L·A·M·E·S ring hop by hop, ticking as
-   they go, until one letter survives — click or press Enter to skip.
-4. The verdict appears with its meaning. **Change names** keeps your input,
+2. Shared letters are slashed pair by pair, pen-on-paper style.
+3. The survivors light up gold as they are counted aloud, one by one.
+4. The count hops around the F·L·A·M·E·S ring, ticking as it goes; each
+   fallen letter is slashed, shakes, and drops away — click or press
+   Enter to skip.
+5. The verdict appears with its meaning. **Change names** keeps your input,
    **Start over** clears it.
-5. The gear button (top right) holds settings: theme, sound effects,
+6. The gear button (top right) holds settings: theme, sound effects,
    and volume.
 
 Only letters count; case, spaces, punctuation, and digits are ignored.
@@ -48,11 +50,12 @@ present, otherwise your `JAVA_HOME`).
 ## Project structure
 
 ```
-pom.xml                            # pinned: JavaFX 21.0.4, JUnit 5.11.4
-src/main/java/flames/              # engine + views + entry point
-src/main/resources/assets/         # flames.css, icon/ (PNGs + ICO)
-src/test/java/flames/      # 16 engine tests + 7 headless view tests
-tools/IconGenerator.java           # artwork source (pure Java2D)
+pom.xml                            # pinned: JavaFX 21.0.2, JUnit 5.11.4
+src/main/java/flames/              # engine + views + settings + entry point
+src/main/resources/assets/         # flames.css, flames-dark.css, sound/,
+                                   # fonts/, icon/ (PNGs + ICO)
+src/test/java/flames/              # 34 tests: 18 engine + 12 view + 4 settings
+tools/                     # IconGenerator, SoundGenerator (asset sources)
 docs/                              # plan, architecture, design, testing,
                                    # phase status, releasing
 .github/workflows/ci.yml           # build + test + jar artifact
@@ -69,8 +72,7 @@ docs/                              # plan, architecture, design, testing,
 
 ## Status & license
 
-All phases 0–10 complete; `1.0.0` tagged `v1.0.0`, followed by a deep-scan
-hardening pass (bundled font, Maven wrapper, headless view tests —
-see `docs/PHASE_STATUS.md`). The one check that needs a display is the
-on-screen walkthrough; everything else is CI-verified.
+All phases 0–17 complete (see `docs/PHASE_STATUS.md`), followed by a
+hardening pass with an agentic deep scan. The one check that needs eyes
+is motion/sound/theme feel; everything else is CI-verified.
 License: to be chosen by the repository owner.

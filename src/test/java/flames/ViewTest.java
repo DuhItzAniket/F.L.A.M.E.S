@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javafx.application.Platform;
@@ -222,6 +223,53 @@ class ViewTest {
                     .filter(p -> p.getStyleClass().contains("chip"))
                     .count();
             assertEquals(8, count);
+        });
+    }
+
+    @Test
+    void skipFinishesOnceWithEndStates() throws Exception {
+        fx(() -> {
+            AtomicInteger done = new AtomicInteger();
+            EliminationView view = new EliminationView(
+                    FlamesEngine.calculate("john", "jane"), testSounds(), done::incrementAndGet);
+            view.finish();
+            view.finish();
+            assertEquals(1, done.get());
+
+            List<StackPane> tiles = new ArrayList<>();
+            collect(view.getChildren(), StackPane.class, tiles);
+            for (StackPane tile : tiles) {
+                if (!tile.getStyleClass().contains("tile")) {
+                    continue;
+                }
+                String letter = ((Label) tile.getChildren().get(0)).getText();
+                if (letter.equals("E")) {
+                    assertTrue(tile.getStyleClass().contains("tile-winner"));
+                } else {
+                    assertEquals(0.0, tile.getOpacity());
+                    assertEquals(46.0, tile.getTranslateY());
+                }
+            }
+            List<javafx.scene.shape.Line> slashes = new ArrayList<>();
+            collect(view.getChildren(), javafx.scene.shape.Line.class, slashes);
+            long crossed = slashes.stream()
+                    .filter(s -> s.isVisible() && s.getEndX() == 30).count();
+            long fallen = slashes.stream()
+                    .filter(s -> s.isVisible() && s.getEndX() == 46).count();
+            assertEquals(4, crossed);
+            assertEquals(5, fallen);
+        });
+    }
+
+    @Test
+    void skipRightAfterPlayDoesNotThrow() throws Exception {
+        fx(() -> {
+            AtomicInteger done = new AtomicInteger();
+            EliminationView view = new EliminationView(
+                    FlamesEngine.calculate("anna", "anna"), testSounds(), done::incrementAndGet);
+            view.play();
+            view.finish();
+            assertEquals(1, done.get());
         });
     }
 
