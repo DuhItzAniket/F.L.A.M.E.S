@@ -44,8 +44,9 @@ never color alone.
 - Cancellation: shared-letter pairs fade out (280 ms) at up to 450 ms
   cadence (compressed to fit 3 s for long names), counter narrates.
 - Counting: highlight hops the ring at up to 110 ms cadence (compressed
-  to fit 1.1 s per elimination), tick per hop; the landed tile punches
-  (scale 1.28) and pops.
+  to fit 1.1 s per elimination), tick per hop.
+- Send-off: pen slash draws (240 ms), tile shakes (220 ms), then drops
+  away fading (300 ms) with a pop — slot kept so the ring never jumps.
 - Crowning pulse 320 ms; handoff 900 ms. Click/Enter/Space skips to the
   verdict. Every step writes a status sentence, so muting motion (or
   sound) loses nothing.

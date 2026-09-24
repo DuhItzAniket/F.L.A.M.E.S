@@ -104,31 +104,36 @@
 }
 
 .tile {
-    -fx-font-family: 'Gentium Book Plus';
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #F4E9D2;
     -fx-background-color: #31271C;
     -fx-background-radius: 10px;
     -fx-border-color: #F4E9D2;
     -fx-border-radius: 10px;
     -fx-border-width: 2px;
-    -fx-min-width: 58px;
-    -fx-min-height: 66px;
     -fx-alignment: center;
 }
 
+.tile-label {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F4E9D2;
+}
+
 .tile-out {
-    -fx-text-fill: #B9A888;
     -fx-border-color: #B9A888;
-    -fx-strikethrough: true;
-    -fx-opacity: 0.55;
+}
+
+.tile-out .tile-label {
+    -fx-text-fill: #B9A888;
 }
 
 .tile-winner {
-    -fx-text-fill: #F4E9D2;
     -fx-background-color: #A02A22;
     -fx-border-color: #A02A22;
+}
+
+.tile-winner .tile-label {
+    -fx-text-fill: #F4E9D2;
 }
 
 .status {

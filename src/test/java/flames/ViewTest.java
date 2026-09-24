@@ -189,10 +189,11 @@ class ViewTest {
             EliminationView view = new EliminationView(
                     FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
                     });
-            List<Label> tiles = new ArrayList<>();
-            collect(view.getChildren(), Label.class, tiles);
+            List<StackPane> tiles = new ArrayList<>();
+            collect(view.getChildren(), StackPane.class, tiles);
             String letters = tiles.stream()
-                    .filter(l -> l.getStyleClass().contains("tile"))
+                    .filter(t -> t.getStyleClass().contains("tile"))
+                    .map(t -> (Label) t.getChildren().get(0))
                     .map(Label::getText)
                     .reduce("", (a, b) -> a + b);
             assertEquals("FLAMES", letters);

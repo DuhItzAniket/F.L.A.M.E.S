@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
@@ -52,6 +55,25 @@ public final class EliminationView extends VBox {
         }
     }
 
+    /** One FLAMES tile: a fixed box with a pen slash for its send-off. */
+    private static final class Tile {
+        final StackPane box;
+        final Label label;
+        final Line slash;
+
+        Tile(char letter) {
+            this.label = new Label(String.valueOf(letter));
+            this.label.getStyleClass().add("tile-label");
+            this.slash = new Line(0, 0, 0, 0);
+            this.slash.getStyleClass().add("slash");
+            this.slash.setVisible(false);
+            this.box = new StackPane(label, slash);
+            this.box.getStyleClass().add("tile");
+            this.box.setMinSize(58, 66);
+            this.box.setMaxSize(58, 66);
+        }
+    }
+
     private final FlamesOutcome outcome;
     private final SoundBank sounds;
     private final Runnable onDone;
@@ -62,8 +84,8 @@ public final class EliminationView extends VBox {
     private final List<Chip> row2 = new ArrayList<>();
     private final List<Integer> pops;
     private final int chipTotal;
-    private final Map<Character, Label> tiles = new HashMap<>();
-    private Label lastHop;
+    private final Map<Character, Tile> tiles = new HashMap<>();
+    private Tile lastHop;
     private Timeline timeline;
     private boolean finished;
 
@@ -97,13 +119,13 @@ public final class EliminationView extends VBox {
         ringBox.setVisible(false);
         ringBox.setManaged(false);
         for (char letter : new char[]{'F', 'L', 'A', 'M', 'E', 'S'}) {
-            Label tile = new Label(String.valueOf(letter));
-            tile.getStyleClass().add("tile");
-            tile.setTooltip(new Tooltip(FlamesCategory.fromLetter(letter).title()));
-            tile.setAccessibleText(letter + ", " + FlamesCategory.fromLetter(letter).title()
+            Tile tile = new Tile(letter);
+            Tooltip.install(tile.box,
+                    new Tooltip(FlamesCategory.fromLetter(letter).title()));
+            tile.box.setAccessibleText(letter + ", " + FlamesCategory.fromLetter(letter).title()
                     + ", still standing.");
             tiles.put(letter, tile);
-            ringBox.getChildren().add(tile);
+            ringBox.getChildren().add(tile.box);
         }
 
         status.getStyleClass().add("status");
@@ -144,8 +166,8 @@ public final class EliminationView extends VBox {
                 final int step = k;
                 at = after(at + interval, () -> {
                     Chip[] pair = prepareCancel(step);
-                    drawSlash(pair[0].slash);
-                    drawSlash(pair[1].slash);
+                    drawSlash(pair[0].slash, 30, 36);
+                    drawSlash(pair[1].slash, 30, 36);
                     sounds.play("pop");
                 });
             }
@@ -201,15 +223,20 @@ public final class EliminationView extends VBox {
             final int left = ring.size();
             at = after(at + 260, () -> {
                 prepareStrike(fallen, left);
-                punch(tiles.get(fallen));
+                drawSlash(tiles.get(fallen).slash, 46, 54);
+                shake(tiles.get(fallen).box);
+                sounds.play("tick");
+            });
+            at = after(at + 520, () -> {
+                dropTile(tiles.get(fallen).box);
                 sounds.play("pop");
             });
-            at += 200;
+            at += 250;
         }
 
         at = after(at + 500, () -> {
             prepareCrown();
-            punch(tiles.get(outcome.category().letter()));
+            punch(tiles.get(outcome.category().letter()).box);
         });
         after(at + 900, this::finish);
         timeline.play();
@@ -289,26 +316,26 @@ public final class EliminationView extends VBox {
         chip.label.setAccessibleText("Counts as " + n + ".");
     }
 
-    private void showHop(Label tile) {
+    private void showHop(Tile tile) {
         if (lastHop != null) {
-            lastHop.getStyleClass().remove("tile-hop");
+            lastHop.box.getStyleClass().remove("tile-hop");
         }
         lastHop = tile;
-        addStyle(tile, "tile-hop");
+        addStyle(tile.box, "tile-hop");
     }
 
     /** Strikes a fallen tile; announces how many stand. */
     private void prepareStrike(char letter, int left) {
-        Label tile = tiles.get(letter);
+        Tile tile = tiles.get(letter);
         if (lastHop == tile) {
             lastHop = null;
         } else if (lastHop != null) {
-            lastHop.getStyleClass().remove("tile-hop");
+            lastHop.box.getStyleClass().remove("tile-hop");
             lastHop = null;
         }
-        tile.getStyleClass().remove("tile-hop");
-        addStyle(tile, "tile-out");
-        tile.setAccessibleText(letter + ", out.");
+        tile.box.getStyleClass().remove("tile-hop");
+        addStyle(tile.box, "tile-out");
+        tile.box.setAccessibleText(letter + ", out.");
         status.setText(left == 1
                 ? letter + " falls \u2014 one survives."
                 : letter + " falls \u2014 " + left + " remain.");
@@ -316,10 +343,11 @@ public final class EliminationView extends VBox {
 
     private void prepareCrown() {
         char winner = outcome.category().letter();
-        Label tile = tiles.get(winner);
-        tile.getStyleClass().remove("tile-hop");
-        addStyle(tile, "tile-winner");
-        tile.setAccessibleText(winner + ", " + outcome.category().title() + ", the verdict.");
+        Tile tile = tiles.get(winner);
+        tile.box.getStyleClass().remove("tile-hop");
+        addStyle(tile.box, "tile-winner");
+        tile.box.setAccessibleText(
+                winner + ", " + outcome.category().title() + ", the verdict.");
         status.setText(winner + " stands alone.");
     }
 
@@ -350,27 +378,51 @@ public final class EliminationView extends VBox {
         for (char fallen : outcome.eliminationOrder()) {
             ring.remove((Character) fallen);
             prepareStrike(fallen, ring.size());
-            tiles.get(fallen).setOpacity(0.55);
+            Tile tile = tiles.get(fallen);
+            tile.slash.setVisible(true);
+            tile.slash.setEndX(46);
+            tile.slash.setEndY(54);
+            tile.box.setTranslateY(46);
+            tile.box.setOpacity(0);
         }
         prepareCrown();
         onDone.run();
     }
 
-    /** Draws the pen slash across a chip, top-left to bottom-right. */
-    private static void drawSlash(Line slash) {
+    /** Draws a pen slash across a chip or tile. */
+    private static void drawSlash(Line slash, double endX, double endY) {
         slash.setVisible(true);
         Timeline draw = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(slash.endXProperty(), 0),
                         new KeyValue(slash.endYProperty(), 0)),
                 new KeyFrame(Duration.millis(240),
-                        new KeyValue(slash.endXProperty(), 30),
-                        new KeyValue(slash.endYProperty(), 36)));
+                        new KeyValue(slash.endXProperty(), endX),
+                        new KeyValue(slash.endYProperty(), endY)));
         draw.play();
     }
 
-    private static void punch(Label label) {
-        ScaleTransition punch = new ScaleTransition(Duration.millis(320), label);
+    /** Startled wiggle before the fall. */
+    private static void shake(StackPane box) {
+        TranslateTransition shake = new TranslateTransition(Duration.millis(110), box);
+        shake.setByX(6);
+        shake.setCycleCount(2);
+        shake.setAutoReverse(true);
+        shake.play();
+    }
+
+    /** The send-off: tile drops away and vanishes, slot kept for layout. */
+    private static void dropTile(StackPane box) {
+        FadeTransition fade = new FadeTransition(Duration.millis(300), box);
+        fade.setToValue(0);
+        fade.play();
+        TranslateTransition drop = new TranslateTransition(Duration.millis(300), box);
+        drop.setByY(46);
+        drop.play();
+    }
+
+    private static void punch(Node node) {
+        ScaleTransition punch = new ScaleTransition(Duration.millis(320), node);
         punch.setToX(1.28);
         punch.setToY(1.28);
         punch.setCycleCount(2);
@@ -378,7 +430,7 @@ public final class EliminationView extends VBox {
         punch.play();
     }
 
-    private static void addStyle(javafx.scene.Node node, String style) {
+    private static void addStyle(Node node, String style) {
         if (!node.getStyleClass().contains(style)) {
             node.getStyleClass().add(style);
         }

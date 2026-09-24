@@ -180,3 +180,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   ("Counting the survivors… 3"), ending "N letters stand." Empty round
   gets its own line. Skip jumps the counter straight to N.
 - Verification: suite stays 32 green; live launch log clean.
+
+## Phase 17 — Slash, shake, and drop send-offs — COMPLETE
+
+- Tiles are fixed boxes with inner labels and pen slashes: each fallen
+  letter is slashed, shakes, then drops away fading (slot kept, ring
+  never jumps). Same pen language as the crossing stage.
+- Inner-label styling via `.tile-label` + descendant rules in both themes.
+- Verification: suite stays 32 green; live launch log clean.
