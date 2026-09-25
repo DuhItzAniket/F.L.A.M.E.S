@@ -189,6 +189,17 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
 - Inner-label styling via `.tile-label` + descendant rules in both themes.
 - Verification: suite stays 32 green; live launch log clean.
 
+## Phase 19 — Ember particle engine — COMPLETE (landed in f51b8a0)
+
+- `EmberField` (Canvas, fixed pool, zero deps): ambient rising motes +
+  radial bursts + `celebrate()` shower; theme-aware alpha; timer idles
+  when empty. Wired behind content in `MainApp`, size-bound, with an
+  "Ambient embers" opt-out in settings (persisted, tested).
+- Live launch caught a crash in it on the first try (fixed before
+  commit); suite 34 → 36.
+- Note: pushed together with the Phase 18 fix commit since the launch
+  failure interrupted the phase boundary.
+
 ## Phase 18 — Gate + deep scan — COMPLETE
 
 - Agentic deep scan (code + resources/docs) found one P0: skipping
@@ -207,3 +218,8 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   don't stop the timeline, they just freeze narration).
 - Verification: suite 32 → 38 green; clean verify; live launch log
   clean; tree clean; pushed.
+- Follow-up honesty note: the original crash trace appeared in a launch
+  log with no intentional input, and a 100 s idle reproduction stayed
+  clean — the trigger was never reproduced (likely a missed stray from
+  background-job teardown). The capture bug itself is undeniable by
+  reading, fixed, and pinned by test regardless.
