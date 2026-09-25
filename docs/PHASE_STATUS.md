@@ -230,3 +230,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   drop-in + fanfare on the verdict, cross-fading view swaps, comet
   trail on counting hops, synthesized whoosh layered on drops.
 - Verification: suite 38 → 39 green; live launch log clean.
+
+## Phase 21 — Batch gate — COMPLETE
+
+- `mvn -B clean verify` green (39/39); tree clean; live launch clean.
+- Reviewed: burst coordinates null-guarded, skip stays silent (no
+  stray bursts), swap chains are re-entrancy harmless, trail cleared
+  on strike/crown/finish.
+- Eyes-on verdict feel (motion, embers, whoosh balance) is yours.
