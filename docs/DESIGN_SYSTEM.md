@@ -48,10 +48,13 @@ never color alone.
 - Counting: highlight hops the ring at up to 110 ms cadence (compressed
   to fit 1.1 s per elimination), tick per hop.
 - Send-off: pen slash draws (240 ms), tile shakes (220 ms), then drops
-  away fading (300 ms) with a pop — slot kept so the ring never jumps.
+  away fading (300 ms) with ember burst + whoosh + pop — slot kept so
+  the ring never jumps. Counting hops leave a two-step comet trail.
+- Verdict: ember shower + word drop-in (380 ms ease-out) + fanfare.
+  Views cross-fade (140 ms out, 220 ms in).
 - Crowning pulse 320 ms; handoff 900 ms. Click/Enter/Space skips to the
   verdict. Every step writes a status sentence, so muting motion (or
-  sound) loses nothing.
+  sound) loses nothing. Ambient embers can be switched off in settings.
 
 ## Icon & assets
 

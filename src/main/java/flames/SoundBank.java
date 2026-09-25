@@ -18,7 +18,7 @@ public final class SoundBank {
 
     public SoundBank(Settings settings) {
         this.settings = settings;
-        for (String name : new String[]{"click", "tick", "pop", "error", "fanfare"}) {
+        for (String name : new String[]{"click", "tick", "pop", "whoosh", "error", "fanfare"}) {
             URL sound = getClass().getResource("/assets/sound/" + name + ".wav");
             if (sound != null) {
                 try {

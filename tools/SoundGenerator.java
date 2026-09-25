@@ -27,6 +27,7 @@ public final class SoundGenerator {
         write(new File(out, "tick.wav"), blip(1200, 40));
         write(new File(out, "pop.wav"), sweep(300, 900, 90));
         write(new File(out, "error.wav"), blip(140, 160));
+        write(new File(out, "whoosh.wav"), whoosh());
         write(new File(out, "fanfare.wav"), concat(
                 note(523, 90), note(659, 90), note(784, 90), note(1047, 220)));
         System.out.println("sounds written to " + out);
@@ -66,6 +67,28 @@ public final class SoundGenerator {
         for (int i = 0; i < n; i++) {
             phase += 2 * Math.PI * (from + (to - from) * i / n) / RATE;
             int v = (int) (Math.sin(phase) * Math.exp(-3.0 * i / n) * 12000);
+            pcm[2 * i] = (byte) (v & 0xFF);
+            pcm[2 * i + 1] = (byte) ((v >>> 8) & 0xFF);
+        }
+        return pcm;
+    }
+
+    /** Airy whoosh: noise through a sweeping lowpass with a swell envelope. */
+    private static byte[] whoosh() {
+        int ms = 300;
+        int n = ms * RATE / 1000;
+        double[] noise = new double[n];
+        java.util.Random random = new java.util.Random(7);
+        for (int i = 0; i < n; i++) {
+            noise[i] = random.nextGaussian();
+        }
+        byte[] pcm = new byte[n * 2];
+        double smooth = 0;
+        for (int i = 0; i < n; i++) {
+            double window = 40 - 36.0 * i / n;
+            smooth += (noise[i] - smooth) / window;
+            double swell = Math.sin(Math.PI * i / n);
+            int v = (int) (smooth * swell * 20000);
             pcm[2 * i] = (byte) (v & 0xFF);
             pcm[2 * i + 1] = (byte) ((v >>> 8) & 0xFF);
         }

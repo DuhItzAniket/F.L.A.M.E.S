@@ -223,3 +223,10 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   clean — the trigger was never reproduced (likely a missed stray from
   background-job teardown). The capture bug itself is undeniable by
   reading, fixed, and pinned by test regardless.
+
+## Phase 20 — Particle choreography — COMPLETE
+
+- Ember bursts on every fall and crowning, celebration shower + word
+  drop-in + fanfare on the verdict, cross-fading view swaps, comet
+  trail on counting hops, synthesized whoosh layered on drops.
+- Verification: suite 38 → 39 green; live launch log clean.

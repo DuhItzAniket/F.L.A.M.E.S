@@ -191,6 +191,10 @@
     -fx-background-color: #F0D9A0;
 }
 
+.tile-echo {
+    -fx-border-color: #C7A85E;
+}
+
 .icon-btn {
     -fx-background-color: transparent;
     -fx-background-radius: 10px;

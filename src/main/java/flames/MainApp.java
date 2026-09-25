@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -19,6 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * JavaFX entry point. Owns the stage and swaps views; game rules stay in
@@ -120,9 +123,9 @@ public final class MainApp extends Application {
         sounds.play("click");
         try {
             FlamesOutcome outcome = FlamesEngine.calculate(first, second);
-            EliminationView elimination = new EliminationView(outcome, sounds, () -> showResult(outcome));
-            content.getChildren().setAll(elimination);
-            elimination.play();
+            EliminationView elimination =
+                    new EliminationView(outcome, sounds, embers, () -> showResult(outcome));
+            swap(elimination, elimination::play);
         } catch (IllegalArgumentException ex) {
             sounds.play("error");
             inputView.showError(ex.getMessage());
@@ -131,17 +134,32 @@ public final class MainApp extends Application {
 
     private void showResult(FlamesOutcome outcome) {
         sounds.play("fanfare");
-        content.getChildren().setAll(new ResultView(outcome,
+        embers.celebrate();
+        ResultView result = new ResultView(outcome,
                 () -> {
                     inputView.keepNames(outcome.displayName1(), outcome.displayName2());
-                    content.getChildren().setAll(inputView);
-                    inputView.focusFirst();
+                    swap(inputView, inputView::focusFirst);
                 },
                 () -> {
                     inputView.keepNames("", "");
-                    content.getChildren().setAll(inputView);
-                    inputView.focusFirst();
-                }));
+                    swap(inputView, inputView::focusFirst);
+                });
+        swap(result, result::reveal);
+    }
+
+    /** Cross-fades content, then runs the follow-up (play, focus, reveal). */
+    private void swap(Node next, Runnable after) {
+        FadeTransition out = new FadeTransition(Duration.millis(140), content);
+        out.setToValue(0);
+        out.setOnFinished(e -> {
+            content.getChildren().setAll(next);
+            FadeTransition in = new FadeTransition(Duration.millis(220), content);
+            in.setFromValue(0);
+            in.setToValue(1);
+            in.play();
+            after.run();
+        });
+        out.play();
     }
 
     /** Gear mark drawn in code: ring, eight teeth, hub. Theme-aware via CSS. */

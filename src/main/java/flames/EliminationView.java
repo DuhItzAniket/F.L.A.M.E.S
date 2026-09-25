@@ -1,6 +1,8 @@
 package flames;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,6 +88,7 @@ public final class EliminationView extends VBox {
 
     private final FlamesOutcome outcome;
     private final SoundBank sounds;
+    private final EmberField embers;
     private final Runnable onDone;
     private final Label status = new Label();
     private final VBox cancelBox = new VBox(10);
@@ -95,16 +98,18 @@ public final class EliminationView extends VBox {
     private final List<Integer> pops;
     private final int chipTotal;
     private final Map<Character, Tile> tiles = new HashMap<>();
+    private final Deque<Tile> trail = new ArrayDeque<>();
     private final List<Chip[]> appliedPairs = new ArrayList<>();
     private final List<Animation> running = new ArrayList<>();
-    private Tile lastHop;
     private Timeline timeline;
     private boolean finished;
 
-    public EliminationView(FlamesOutcome outcome, SoundBank sounds, Runnable onDone) {
+    public EliminationView(FlamesOutcome outcome, SoundBank sounds, EmberField embers,
+            Runnable onDone) {
         super(16);
         this.outcome = Objects.requireNonNull(outcome, "outcome");
         this.sounds = Objects.requireNonNull(sounds, "sounds");
+        this.embers = Objects.requireNonNull(embers, "embers");
         this.onDone = Objects.requireNonNull(onDone, "onDone");
         Objects.requireNonNull(outcome.displayName1(), "displayName1");
         Objects.requireNonNull(outcome.displayName2(), "displayName2");
@@ -254,6 +259,8 @@ public final class EliminationView extends VBox {
             });
             at = after(at + 520, () -> {
                 dropTile(tiles.get(fallen).box);
+                burstAt(tiles.get(fallen), 22, 150);
+                sounds.play("whoosh");
                 sounds.play("pop");
             });
             at += 250;
@@ -261,7 +268,9 @@ public final class EliminationView extends VBox {
 
         at = after(at + 500, () -> {
             prepareCrown();
-            punch(tiles.get(outcome.category().letter()).box);
+            Tile winner = tiles.get(outcome.category().letter());
+            punch(winner.box);
+            burstAt(winner, 40, 170);
         });
         after(at + 900, this::finish);
         timeline.play();
@@ -386,24 +395,46 @@ public final class EliminationView extends VBox {
                 new String(Character.toChars(chip.codePoint)) + ", counts as " + n + ".");
     }
 
+    /** Comet trail: current hop bright, two previous dimmed. */
     private void showHop(Tile tile) {
-        if (lastHop != null) {
-            lastHop.box.getStyleClass().remove("tile-hop");
+        for (Tile past : trail) {
+            past.box.getStyleClass().remove("tile-hop");
+            past.box.getStyleClass().remove("tile-echo");
         }
-        lastHop = tile;
-        addStyle(tile.box, "tile-hop");
+        trail.addLast(tile);
+        while (trail.size() > 3) {
+            trail.removeFirst();
+        }
+        int i = 0;
+        for (Tile past : trail) {
+            addStyle(past.box, i++ == trail.size() - 1 ? "tile-hop" : "tile-echo");
+        }
+    }
+
+    private void clearTrail() {
+        for (Tile tile : tiles.values()) {
+            tile.box.getStyleClass().remove("tile-hop");
+            tile.box.getStyleClass().remove("tile-echo");
+        }
+        trail.clear();
+    }
+
+    /** Ember burst at a tile's center, in field coordinates. */
+    private void burstAt(Tile tile, int count, double speed) {
+        javafx.geometry.Point2D center = tile.box.localToScene(
+                tile.box.getWidth() / 2, tile.box.getHeight() / 2);
+        javafx.geometry.Point2D local = embers.sceneToLocal(center);
+        if (local != null) {
+            embers.burst(local.getX(), local.getY(), count, speed);
+        }
     }
 
     /** Strikes a fallen tile; announces how many stand. */
     private void prepareStrike(char letter, int left) {
         Tile tile = tiles.get(letter);
-        if (lastHop == tile) {
-            lastHop = null;
-        } else if (lastHop != null) {
-            lastHop.box.getStyleClass().remove("tile-hop");
-            lastHop = null;
-        }
+        trail.remove(tile);
         tile.box.getStyleClass().remove("tile-hop");
+        tile.box.getStyleClass().remove("tile-echo");
         addStyle(tile.box, "tile-out");
         tile.box.setAccessibleText(letter + ", out.");
         status.setText(left == 1
@@ -414,7 +445,7 @@ public final class EliminationView extends VBox {
     private void prepareCrown() {
         char winner = outcome.category().letter();
         Tile tile = tiles.get(winner);
-        tile.box.getStyleClass().remove("tile-hop");
+        clearTrail();
         addStyle(tile.box, "tile-winner");
         tile.box.setAccessibleText(
                 winner + ", " + outcome.category().title() + ", the verdict.");

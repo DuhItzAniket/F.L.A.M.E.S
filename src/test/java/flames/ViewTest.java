@@ -53,6 +53,10 @@ class ViewTest {
                 java.util.prefs.Preferences.userRoot().node("flames-viewtest")));
     }
 
+    private static EmberField testEmbers() {
+        return new EmberField();
+    }
+
     @FunctionalInterface
     private interface FxTask {
         void run() throws Exception;
@@ -188,7 +192,7 @@ class ViewTest {
     void eliminationStartsWithSixTilesAndStatus() throws Exception {
         fx(() -> {
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
+                    FlamesEngine.calculate("john", "jane"), testSounds(), testEmbers(), () -> {
                     });
             List<StackPane> tiles = new ArrayList<>();
             collect(view.getChildren(), StackPane.class, tiles);
@@ -207,7 +211,7 @@ class ViewTest {
         FlamesOutcome bad = new FlamesOutcome(FlamesCategory.FRIENDS, 3,
                 List.of('F', 'L', 'X', 'M', 'E'), "a", "b");
         assertThrows(IllegalArgumentException.class,
-                () -> new EliminationView(bad, testSounds(), () -> {
+                () -> new EliminationView(bad, testSounds(), testEmbers(), () -> {
                 }));
     }
 
@@ -215,7 +219,7 @@ class ViewTest {
     void cancellationLaysOutOneChipPerLetter() throws Exception {
         fx(() -> {
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
+                    FlamesEngine.calculate("john", "jane"), testSounds(), testEmbers(), () -> {
                     });
             List<StackPane> chips = new ArrayList<>();
             collect(view.getChildren(), StackPane.class, chips);
@@ -231,7 +235,7 @@ class ViewTest {
         fx(() -> {
             AtomicInteger done = new AtomicInteger();
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("john", "jane"), testSounds(), done::incrementAndGet);
+                    FlamesEngine.calculate("john", "jane"), testSounds(), testEmbers(), done::incrementAndGet);
             view.finish();
             view.finish();
             assertEquals(1, done.get());
@@ -266,7 +270,7 @@ class ViewTest {
         fx(() -> {
             AtomicInteger done = new AtomicInteger();
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("anna", "anna"), testSounds(), done::incrementAndGet);
+                    FlamesEngine.calculate("anna", "anna"), testSounds(), testEmbers(), done::incrementAndGet);
             view.play();
             view.finish();
             assertEquals(1, done.get());
@@ -291,7 +295,7 @@ class ViewTest {
     void countUpPlansTheTrueSurvivors() throws Exception {
         fx(() -> {
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
+                    FlamesEngine.calculate("john", "jane"), testSounds(), testEmbers(), () -> {
                     });
             assertEquals(List.of("o", "h", "a", "e"), view.plannedSurvivorLetters());
         });
@@ -302,7 +306,7 @@ class ViewTest {
         AtomicReference<String> status = new AtomicReference<>("");
         fx(() -> {
             EliminationView view = new EliminationView(
-                    FlamesEngine.calculate("a", "b"), testSounds(), () -> {
+                    FlamesEngine.calculate("a", "b"), testSounds(), testEmbers(), () -> {
                     });
             view.play();
             javafx.animation.Timeline probe = new javafx.animation.Timeline(
@@ -314,6 +318,18 @@ class ViewTest {
         Thread.sleep(4500);
         assertTrue(status.get().contains("Counting"),
                 "timeline did not advance headless, saw: " + status.get());
+    }
+
+    @Test
+    void verdictRevealRunsHeadless() throws Exception {
+        fx(() -> {
+            ResultView view = new ResultView(
+                    FlamesEngine.calculate("john", "jane"), () -> {
+                    }, () -> {
+                    });
+            view.reveal();
+            assertEquals("Enemies", labeled(view.getChildren(), "word").getText());
+        });
     }
 
     @Test

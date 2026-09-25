@@ -2,6 +2,9 @@ package flames;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,9 +12,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 /** The verdict moment: who, what it means, and how to play again. */
 public final class ResultView extends VBox {
+
+    private final Label word;
 
     public ResultView(FlamesOutcome outcome, Runnable onChangeNames, Runnable onNewNames) {
         super(12);
@@ -33,6 +39,7 @@ public final class ResultView extends VBox {
 
         Label word = new Label(outcome.category().title());
         word.getStyleClass().add("word");
+        this.word = word;
 
         Label meaning = new Label(outcome.category().meaning());
         meaning.getStyleClass().add("meaning");
@@ -56,6 +63,19 @@ public final class ResultView extends VBox {
         actions.setAlignment(Pos.CENTER);
 
         getChildren().addAll(names, caption, word, meaning, actions);
+    }
+
+    /** Drops the verdict word in once the view is shown. */
+    public void reveal() {
+        word.setOpacity(0);
+        word.setTranslateY(-26);
+        FadeTransition fade = new FadeTransition(Duration.millis(350), word);
+        fade.setToValue(1);
+        fade.play();
+        TranslateTransition drop = new TranslateTransition(Duration.millis(380), word);
+        drop.setToY(0);
+        drop.setInterpolator(Interpolator.EASE_OUT);
+        drop.play();
     }
 
     private static String captionFor(FlamesOutcome outcome) {
