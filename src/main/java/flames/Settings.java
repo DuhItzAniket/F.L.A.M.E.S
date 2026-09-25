@@ -40,6 +40,16 @@ public final class Settings {
         flush();
     }
 
+    /** Ambient ember background; motion-sensitive users can switch it off. */
+    public boolean isAmbientEnabled() {
+        return prefs.getBoolean("ambient", true);
+    }
+
+    public void setAmbientEnabled(boolean enabled) {
+        prefs.putBoolean("ambient", enabled);
+        flush();
+    }
+
     /** Volume in 0..1, clamped. */
     public double getVolume() {
         return clamp(prefs.getDouble("volume", 0.7));

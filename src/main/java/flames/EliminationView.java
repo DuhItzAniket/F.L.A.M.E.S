@@ -2,9 +2,11 @@ package flames;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -192,7 +194,7 @@ public final class EliminationView extends VBox {
             }
         }
 
-        List<Chip> survivors = survivors();
+        List<Chip> survivors = plannedSurvivors();
         if (survivors.isEmpty()) {
             at = after(at + 700, () -> {
                 status.setText("Nothing left \u2014 a perfect round.");
@@ -229,10 +231,10 @@ public final class EliminationView extends VBox {
         for (int e = 0; e < order.size(); e++) {
             double hopInterval = Math.min(110, 1100.0 / step);
             for (int i = 0; i < step; i++) {
-                final int hop = (index + i) % ring.size();
+                final Tile hopTile = tiles.get(ring.get((index + i) % ring.size()));
                 final int spoken = i + 1;
                 at = after(at + hopInterval, () -> {
-                    showHop(tiles.get(ring.get(hop)));
+                    showHop(hopTile);
                     status.setText("Counting\u2026 " + spoken);
                     sounds.play("tick");
                 });
@@ -263,6 +265,11 @@ public final class EliminationView extends VBox {
         });
         after(at + 900, this::finish);
         timeline.play();
+    }
+
+    /** Current status narration, for tests. */
+    String statusText() {
+        return status.getText();
     }
 
     /** Schedules work at an absolute time; returns that time. */
@@ -319,6 +326,42 @@ public final class EliminationView extends VBox {
         Chip[] pair = new Chip[]{first, second};
         appliedPairs.add(pair);
         return pair;
+    }
+
+    /**
+     * Survivors as the schedule will see them, computed from data rather
+     * than live flags (the whole timeline is built before a frame fires).
+     */
+    private List<Chip> plannedSurvivors() {
+        Set<Chip> doomed = new HashSet<>();
+        for (int cp : pops) {
+            for (List<Chip> row : List.of(row1, row2)) {
+                for (Chip chip : row) {
+                    if (!doomed.contains(chip) && chip.codePoint == cp) {
+                        doomed.add(chip);
+                        break;
+                    }
+                }
+            }
+        }
+        List<Chip> survivors = new ArrayList<>();
+        for (List<Chip> row : List.of(row1, row2)) {
+            for (Chip chip : row) {
+                if (!doomed.contains(chip)) {
+                    survivors.add(chip);
+                }
+            }
+        }
+        return survivors;
+    }
+
+    /** Planned survivor letters, for tests. */
+    List<String> plannedSurvivorLetters() {
+        List<String> letters = new ArrayList<>();
+        for (Chip chip : plannedSurvivors()) {
+            letters.add(new String(Character.toChars(chip.codePoint)));
+        }
+        return letters;
     }
 
     private List<Chip> survivors() {

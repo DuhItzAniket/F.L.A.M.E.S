@@ -30,6 +30,7 @@ class SettingsTest {
     void defaultsAreSane() {
         assertEquals(Settings.THEME_LIGHT, settings.getTheme());
         assertTrue(settings.isSoundEnabled());
+        assertTrue(settings.isAmbientEnabled());
         assertEquals(0.7, settings.getVolume());
     }
 
@@ -47,6 +48,14 @@ class SettingsTest {
         assertFalse(settings.isSoundEnabled());
         settings.setSoundEnabled(true);
         assertTrue(settings.isSoundEnabled());
+    }
+
+    @Test
+    void ambientToggleRoundTrips() {
+        settings.setAmbientEnabled(false);
+        assertFalse(settings.isAmbientEnabled());
+        settings.setAmbientEnabled(true);
+        assertTrue(settings.isAmbientEnabled());
     }
 
     @Test

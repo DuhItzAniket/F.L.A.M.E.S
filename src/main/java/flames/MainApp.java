@@ -31,6 +31,7 @@ public final class MainApp extends Application {
     private Scene scene;
     private final Settings settings = new Settings();
     private SoundBank sounds;
+    private EmberField embers;
     private String stylesheet;
 
     @Override
@@ -48,10 +49,18 @@ public final class MainApp extends Application {
         gear.setTooltip(new Tooltip("Settings"));
         gear.setOnAction(e -> {
             sounds.play("click");
-            SettingsDialog.show(stage, settings, this::applyTheme);
+            SettingsDialog.show(stage, settings, () -> {
+                applyTheme();
+                embers.setAmbientEnabled(settings.isAmbientEnabled());
+            });
         });
 
-        StackPane root = new StackPane(content, gear);
+        embers = new EmberField();
+        embers.setAmbientEnabled(settings.isAmbientEnabled());
+
+        StackPane root = new StackPane(embers, content, gear);
+        embers.widthProperty().bind(root.widthProperty());
+        embers.heightProperty().bind(root.heightProperty());
         StackPane.setAlignment(gear, Pos.TOP_RIGHT);
         StackPane.setMargin(gear, new Insets(10));
 
@@ -80,7 +89,9 @@ public final class MainApp extends Application {
     }
 
     private void applyTheme() {
+        boolean dark = Settings.THEME_DARK.equals(settings.getTheme());
         stylesheet = stylesheetFor(settings.getTheme());
+        embers.setTheme(dark);
         if (scene != null) {
             scene.getStylesheets().clear();
             if (stylesheet != null) {

@@ -22,7 +22,7 @@ public final class SettingsDialog {
     private SettingsDialog() {
     }
 
-    public static void show(Window owner, Settings settings, Runnable onThemeChanged) {
+    public static void show(Window owner, Settings settings, Runnable onSettingsChanged) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(owner);
         dialog.setTitle("Settings");
@@ -35,7 +35,7 @@ public final class SettingsDialog {
         theme.setOnAction(e -> {
             settings.setTheme("Dark".equals(theme.getValue())
                     ? Settings.THEME_DARK : Settings.THEME_LIGHT);
-            onThemeChanged.run();
+            onSettingsChanged.run();
             String css = MainApp.stylesheetFor(settings.getTheme());
             dialog.getDialogPane().getStylesheets().clear();
             if (css != null) {
@@ -50,6 +50,14 @@ public final class SettingsDialog {
         sound.setSelected(settings.isSoundEnabled());
         sound.setTooltip(new Tooltip("Play ticks, pops, and fanfares"));
         sound.setOnAction(e -> settings.setSoundEnabled(sound.isSelected()));
+
+        CheckBox ambient = new CheckBox("Ambient embers");
+        ambient.setSelected(settings.isAmbientEnabled());
+        ambient.setTooltip(new Tooltip("Drifting background particles (off for sensitive eyes)"));
+        ambient.setOnAction(e -> {
+            settings.setAmbientEnabled(ambient.isSelected());
+            onSettingsChanged.run();
+        });
 
         Label volumeLabel = new Label();
         volumeLabel.getStyleClass().add("hint");
@@ -67,7 +75,7 @@ public final class SettingsDialog {
         HBox volumeRow = new HBox(12, new Label("Volume"), volume);
         volumeRow.setAlignment(Pos.CENTER_LEFT);
 
-        VBox content = new VBox(12, themeRow, sound, volumeRow, volumeLabel);
+        VBox content = new VBox(12, themeRow, sound, ambient, volumeRow, volumeLabel);
         content.setPadding(new Insets(16));
         dialog.getDialogPane().setContent(content);
         String css = MainApp.stylesheetFor(settings.getTheme());

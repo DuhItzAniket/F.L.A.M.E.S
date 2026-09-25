@@ -274,6 +274,49 @@ class ViewTest {
     }
 
     @Test
+    void emberFieldBurstsAndCelebrates() throws Exception {
+        fx(() -> {
+            EmberField field = new EmberField();
+            assertEquals(0, field.aliveCount());
+            field.burst(100, 100, 20, 130);
+            assertTrue(field.aliveCount() > 0);
+            field.setTheme(true);
+            field.setAmbientEnabled(false);
+            field.celebrate();
+            assertTrue(field.aliveCount() > 0);
+        });
+    }
+
+    @Test
+    void countUpPlansTheTrueSurvivors() throws Exception {
+        fx(() -> {
+            EliminationView view = new EliminationView(
+                    FlamesEngine.calculate("john", "jane"), testSounds(), () -> {
+                    });
+            assertEquals(List.of("o", "h", "a", "e"), view.plannedSurvivorLetters());
+        });
+    }
+
+    @Test
+    void playAdvancesFramesHeadless() throws Exception {
+        AtomicReference<String> status = new AtomicReference<>("");
+        fx(() -> {
+            EliminationView view = new EliminationView(
+                    FlamesEngine.calculate("a", "b"), testSounds(), () -> {
+                    });
+            view.play();
+            javafx.animation.Timeline probe = new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(
+                            javafx.util.Duration.millis(3900),
+                            e -> status.set(view.statusText())));
+            probe.play();
+        });
+        Thread.sleep(4500);
+        assertTrue(status.get().contains("Counting"),
+                "timeline did not advance headless, saw: " + status.get());
+    }
+
+    @Test
     void bothThemesShipTheirStylesheet() {
         assertNotNull(MainApp.class.getResource("/assets/flames.css"));
         assertNotNull(MainApp.class.getResource("/assets/flames-dark.css"));

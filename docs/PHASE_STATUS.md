@@ -199,5 +199,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   astral-correct chip total, slash jitter (`managed=false` + offsets),
   key-event consume, letter-preserving screen-reader text — plus a full
   doc-sync pass (counts, phases, assets, motion).
-- Verification: suite 32 → 34 green; clean verify; live launch log
+- Live launch then caught a second real bug the scan missed: hop
+  lambdas read a `ring` list that keeps mutating during schedule-time,
+  crashing every hop frame. Fixed by snapshotting the tile per frame.
+  A headless play-advance test now pins forward progress (verified it
+  fails on the old code — including proof that per-frame exceptions
+  don't stop the timeline, they just freeze narration).
+- Verification: suite 32 → 38 green; clean verify; live launch log
   clean; tree clean; pushed.
