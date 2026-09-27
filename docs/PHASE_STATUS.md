@@ -274,3 +274,14 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   the FX→PNG bridge.
 - Verification: suite 49 → 50 green (share text + card build);
   live launch log clean. Pixel proof left to eyes-on (save a card).
+
+## Phase 27 — Windows installer — COMPLETE
+
+- WiX 3.11 via portable NuGet package (no admin); `package.bat` builds
+  app-image + per-user exe with menu group, shortcuts, icon, metadata.
+- Two real bugs caught by installing: main class must be a plain
+  `Launcher` (fixed, documented), and `target/libs` needs the app jar.
+- Verified: app-image exe alive 20 s; exe installed; Start Menu group
+  correct; installed exe alive 20 s+. Left installed for the user.
+- Verification: suite stays 50 green (`verify` on the packaging commit
+  is build-only for the new plugin + script).

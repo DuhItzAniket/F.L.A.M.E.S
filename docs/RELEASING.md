@@ -24,18 +24,33 @@ Requires JDK 21 + Maven 3.9+:
 ./mvnw -B verify   # runs tests, produces target/flames-<version>.jar
 ```
 
-## Windows installer (not yet verified here — needs WiX on the build machine)
+## Windows installer (verified 1.0.0)
+
+`package.bat` does the whole thing: Maven build, `jpackage` app-image,
+then the exe installer. Needs JDK 21; the exe step needs WiX 3.x
+`candle`/`light` on PATH (JDK 21 jpackage cannot use WiX 4+).
 
 ```sh
-./mvnw -B -DskipTests package
-mkdir app-input && cp target/flames-1.0.0.jar app-input/
-jpackage --type exe --name F.L.A.M.E.S --app-version 1.0.0 \
-  --input app-input --main-jar flames-1.0.0.jar \
-  --main-class flames.MainApp --icon src/main/resources/assets/icon/flames.ico \
-  --win-menu --win-shortcut
+package.bat
 ```
 
-Do not publish an installer built any other way.
+Verified end to end: app-image exe stays up, exe installs per-user with
+Start Menu group + desktop shortcut, installed exe stays up. The app is
+installed at `%LocalAppData%\F.L.A.M.E.S` — no admin needed.
+
+Notes from the trenches:
+
+- The jpackage main class must be `flames.Launcher` (plain class), not
+  `flames.MainApp`: an `Application` subclass makes the launcher demand
+  modules on the module path and it exits with "JavaFX runtime
+  components are missing".
+- `target/libs` must contain the app jar too (`copy-dependencies` only
+  stages dependencies) — `package.bat` copies it.
+- Same-version reinstalls are refused (MSI 1638); uninstall first via
+  `msiexec /x {ProductCode} /quiet` (the code is printed in a `/log`
+  run) or bump the version.
+
+## Release checklist
 
 ## Release checklist
 
