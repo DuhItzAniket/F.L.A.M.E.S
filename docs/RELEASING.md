@@ -56,4 +56,6 @@ Notes from the trenches:
 2. `./mvnw -B clean verify` green on a clean checkout.
 3. Version bumped in `pom.xml` + `package.bat`; README status final.
 4. `git tag v<version>` on the release commit; push with `git push --tags`.
-5. Attach the CI jar and the `package.bat` exe to the GitHub release.
+5. Create the GitHub release and attach the `package.bat` exe as a
+   download asset (v1.0.0 lives at
+   `https://github.com/DuhItzAniket/F.L.A.M.E.S/releases/tag/v1.0.0`).

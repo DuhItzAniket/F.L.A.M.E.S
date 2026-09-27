@@ -29,7 +29,13 @@ counting cycle.
 
 ## Run it
 
-Requires JDK 21 (LTS) only — the Maven wrapper bootstraps Maven 3.9.9:
+**Easiest:** download **`F.L.A.M.E.S-1.0.0.exe`** from the
+[v1.0.0 release](https://github.com/DuhItzAniket/F.L.A.M.E.S/releases/tag/v1.0.0),
+double-click to install, and launch from the Start Menu. No Java needed.
+(Windows SmartScreen may warn because the installer is unsigned —
+More info / Run anyway.)
+
+From source — requires JDK 21 only, the wrapper bootstraps Maven:
 
 ```sh
 mvnw.cmd javafx:run   # Windows; ./mvnw javafx:run on Unix (needs a display)
