@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -20,6 +21,7 @@ public final class InputView extends VBox {
 
     private final TextField firstName = new TextField();
     private final TextField secondName = new TextField();
+    private final CheckBox manual = new CheckBox("Cross the pairs myself");
     private final Label error = new Label();
 
     public InputView(BiConsumer<String, String> onCalculate) {
@@ -56,6 +58,8 @@ public final class InputView extends VBox {
         error.setVisible(false);
         error.setManaged(false);
 
+        manual.setTooltip(new Tooltip("Manual mode: you tap the matching pairs"));
+
         Button calculate = new Button("Reveal fate");
         calculate.getStyleClass().add("btn-primary");
         calculate.setDefaultButton(true);
@@ -79,7 +83,11 @@ public final class InputView extends VBox {
         disclaimer.getStyleClass().add("hint");
 
         getChildren().addAll(logo, title, subtitle, firstLabel, firstName, firstCount,
-                secondLabel, secondName, secondCount, error, actions, disclaimer);
+                secondLabel, secondName, secondCount, error, manual, actions, disclaimer);
+    }
+
+    public boolean isManual() {
+        return manual.isSelected();
     }
 
     /** Shows an inline error, or hides it when message is null. */

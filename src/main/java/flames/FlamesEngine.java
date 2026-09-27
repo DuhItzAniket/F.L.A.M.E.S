@@ -102,8 +102,24 @@ public final class FlamesEngine {
         if (first.isEmpty() || second.isEmpty()) {
             throw new IllegalArgumentException(emptyInputMessage(first.isEmpty(), second.isEmpty()));
         }
+        return calculate(name1, name2, remainingCount(name1, name2));
+    }
 
-        int count = remainingCount(name1, name2);
+    /**
+     * Full calculation with an explicit count — the manual mode path, where
+     * the player crossed the pairs and the leftovers are counted instead.
+     *
+     * @throws IllegalArgumentException on empty names or a negative count
+     */
+    public static FlamesOutcome calculate(String name1, String name2, int count) {
+        String first = normalize(name1);
+        String second = normalize(name2);
+        if (first.isEmpty() || second.isEmpty()) {
+            throw new IllegalArgumentException(emptyInputMessage(first.isEmpty(), second.isEmpty()));
+        }
+        if (count < 0) {
+            throw new IllegalArgumentException("Count cannot be negative: " + count);
+        }
         List<Round> rounds = eliminationRounds(count);
         List<Character> removed = new ArrayList<>();
         for (Round round : rounds) {

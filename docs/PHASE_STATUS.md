@@ -246,3 +246,14 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   bond meter from pair overlap (tested); `n/50` counters under fields;
   4-stage stepper tracking the show; fun disclaimer line.
 - Verification: suite 39 → 42 green; live launch log clean.
+
+## Phase 24 — Manual cross-it-yourself mode — COMPLETE
+
+- Shared `LetterChip` tile; `ManualView` with tap-to-select, match to
+  cross (slash + pop), mismatch guidance, live leftover counter,
+  keyboard-crossable chips, Back + Count it actions.
+- `FlamesEngine.calculate` overload takes the player's count; ring
+  replays via new `playFromRing` (cancel/count stages skipped, same
+  engine math). Mode checkbox on the input view.
+- Verification: suite 42 → 44 green (incl. headless click-through);
+  live launch log clean.

@@ -121,6 +121,10 @@ public final class MainApp extends Application {
 
     private void calculate(String first, String second) {
         sounds.play("click");
+        if (inputView.isManual()) {
+            showManual(first, second);
+            return;
+        }
         try {
             FlamesOutcome outcome = FlamesEngine.calculate(first, second);
             EliminationView elimination =
@@ -130,6 +134,26 @@ public final class MainApp extends Application {
             sounds.play("error");
             inputView.showError(ex.getMessage());
         }
+    }
+
+    private void showManual(String first, String second) {
+        try {
+            FlamesEngine.calculate(first, second);
+        } catch (IllegalArgumentException ex) {
+            sounds.play("error");
+            inputView.showError(ex.getMessage());
+            return;
+        }
+        ManualView manual = new ManualView(first, second, sounds,
+                count -> {
+                    FlamesOutcome outcome = FlamesEngine.calculate(first, second, count);
+                    EliminationView elimination = new EliminationView(
+                            outcome, sounds, embers, () -> showResult(outcome));
+                    swap(elimination, elimination::playFromRing);
+                },
+                () -> swap(inputView, inputView::focusFirst));
+        swap(manual, () -> {
+        });
     }
 
     private void showResult(FlamesOutcome outcome) {

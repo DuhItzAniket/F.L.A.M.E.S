@@ -39,31 +39,6 @@ import javafx.util.Duration;
  */
 public final class EliminationView extends VBox {
 
-    /** One letter chip: a fixed tile with a pen slash drawn across on crossing. */
-    private static final class Chip {
-        final StackPane box;
-        final Label label;
-        final Line slash;
-        final int codePoint;
-        boolean taken;
-
-        Chip(int codePoint) {
-            this.codePoint = codePoint;
-            this.label = new Label(new String(Character.toChars(codePoint)));
-            this.label.getStyleClass().add("chip-label");
-            this.slash = new Line(0, 0, 0, 0);
-            this.slash.getStyleClass().add("slash");
-            this.slash.setVisible(false);
-            this.slash.setManaged(false);
-            this.slash.setLayoutX(5);
-            this.slash.setLayoutY(5);
-            this.box = new StackPane(label, slash);
-            this.box.getStyleClass().add("chip");
-            this.box.setMinSize(40, 46);
-            this.box.setMaxSize(40, 46);
-        }
-    }
-
     /** One FLAMES tile: a fixed box with a pen slash for its send-off. */
     private static final class Tile {
         final StackPane box;
@@ -94,13 +69,13 @@ public final class EliminationView extends VBox {
     private final HBox stepper = new HBox(8);
     private final VBox cancelBox = new VBox(10);
     private final HBox ringBox = new HBox(10);
-    private final List<Chip> row1 = new ArrayList<>();
-    private final List<Chip> row2 = new ArrayList<>();
+    private final List<LetterChip> row1 = new ArrayList<>();
+    private final List<LetterChip> row2 = new ArrayList<>();
     private final List<Integer> pops;
     private final int chipTotal;
     private final Map<Character, Tile> tiles = new HashMap<>();
     private final Deque<Tile> trail = new ArrayDeque<>();
-    private final List<Chip[]> appliedPairs = new ArrayList<>();
+    private final List<LetterChip[]> appliedPairs = new ArrayList<>();
     private final List<Animation> running = new ArrayList<>();
     private Timeline timeline;
     private boolean finished;
@@ -211,15 +186,15 @@ public final class EliminationView extends VBox {
             for (int k = 0; k < pops.size(); k++) {
                 final int step = k;
                 at = after(at + interval, () -> {
-                    Chip[] pair = prepareCancel(step);
-                    drawSlash(pair[0].slash, 30, 36);
-                    drawSlash(pair[1].slash, 30, 36);
+                    LetterChip[] pair = prepareCancel(step);
+                    playSlash(pair[0].slash, 30, 36);
+                    playSlash(pair[1].slash, 30, 36);
                     sounds.play("pop");
                 });
             }
         }
 
-        List<Chip> survivors = plannedSurvivors();
+        List<LetterChip> survivors = plannedSurvivors();
         if (survivors.isEmpty()) {
             at = after(at + 700, () -> {
                 status.setText("Nothing left \u2014 a perfect round.");
@@ -229,7 +204,7 @@ public final class EliminationView extends VBox {
             double countInterval = Math.min(300, 2500.0 / survivors.size());
             for (int i = 0; i < survivors.size(); i++) {
                 final int spoken = i + 1;
-                final Chip chip = survivors.get(i);
+                final LetterChip chip = survivors.get(i);
                 at = after(at + countInterval, () -> {
                     applyCount(chip, spoken);
                     punch(chip.label);
@@ -249,9 +224,41 @@ public final class EliminationView extends VBox {
             ringBox.setVisible(true);
             ringBox.setManaged(true);
         });
+        at = scheduleRing(at);
+        at = scheduleFinish(at);
+        timeline.play();
+    }
+
+    /**
+     * Manual-mode entry: the player already crossed the pairs, so the show
+     * starts at the ring with the player's own count.
+     */
+    public void playFromRing() {
+        if (finished) {
+            return;
+        }
+        Platform.runLater(this::requestFocus);
+        timeline = new Timeline();
+        cancelBox.setVisible(false);
+        cancelBox.setManaged(false);
+        ringBox.setVisible(true);
+        ringBox.setManaged(true);
+        markStage(2);
+        double at = after(600, () -> status.setText("Counting " + ringStep() + "\u2026"));
+        at = scheduleRing(at);
+        at = scheduleFinish(at);
+        timeline.play();
+    }
+
+    private int ringStep() {
+        int count = outcome.remainingCount();
+        return count == 0 ? 6 : count;
+    }
+
+    /** Schedules the hop-counting ring; returns the end time. */
+    private double scheduleRing(double at) {
         List<Character> ring = new ArrayList<>(List.of('F', 'L', 'A', 'M', 'E', 'S'));
-        int step = outcome.remainingCount() == 0
-                ? ring.size() : outcome.remainingCount();
+        int step = ringStep();
         int index = 0;
         var order = outcome.eliminationOrder();
         for (int e = 0; e < order.size(); e++) {
@@ -274,7 +281,7 @@ public final class EliminationView extends VBox {
             final int left = ring.size();
             at = after(at + 260, () -> {
                 prepareStrike(fallen, left);
-                drawSlash(tiles.get(fallen).slash, 46, 54);
+                playSlash(tiles.get(fallen).slash, 46, 54);
                 shake(tiles.get(fallen).box);
                 sounds.play("tick");
             });
@@ -286,7 +293,11 @@ public final class EliminationView extends VBox {
             });
             at += 250;
         }
+        return at;
+    }
 
+    /** Schedules the crowning and the handoff; returns the end time. */
+    private double scheduleFinish(double at) {
         at = after(at + 500, () -> {
             markStage(3);
             prepareCrown();
@@ -295,7 +306,7 @@ public final class EliminationView extends VBox {
             burstAt(winner, 40, 170);
         });
         after(at + 900, this::finish);
-        timeline.play();
+        return at;
     }
 
     /** Current status narration, for tests. */
@@ -313,12 +324,12 @@ public final class EliminationView extends VBox {
         return at;
     }
 
-    private VBox chipRow(String name, List<Chip> chips) {
+    private VBox chipRow(String name, List<LetterChip> chips) {
         Label caption = new Label(name.isEmpty() ? "?" : name);
         caption.getStyleClass().add("row-label");
         FlowPane flow = new FlowPane(6, 6);
         flow.getStyleClass().add("chips");
-        for (Chip chip : chips) {
+        for (LetterChip chip : chips) {
             flow.getChildren().add(chip.box);
         }
         VBox row = new VBox(4, caption, flow);
@@ -326,12 +337,12 @@ public final class EliminationView extends VBox {
         return row;
     }
 
-    private void buildChips(List<Chip> row, String name) {
-        FlamesEngine.normalize(name).codePoints().forEach(cp -> row.add(new Chip(cp)));
+    private void buildChips(List<LetterChip> row, String name) {
+        FlamesEngine.normalize(name).codePoints().forEach(cp -> row.add(new LetterChip(cp)));
     }
 
-    private Chip take(List<Chip> row, int codePoint) {
-        for (Chip chip : row) {
+    private LetterChip take(List<LetterChip> row, int codePoint) {
+        for (LetterChip chip : row) {
             if (!chip.taken && chip.codePoint == codePoint) {
                 chip.taken = true;
                 return chip;
@@ -341,20 +352,20 @@ public final class EliminationView extends VBox {
     }
 
     /** Marks the k-th pair crossed out; records it for the skip path. */
-    private Chip[] prepareCancel(int k) {
+    private LetterChip[] prepareCancel(int k) {
         int cp = pops.get(k);
-        Chip first = take(row1, cp);
-        Chip second = take(row2, cp);
+        LetterChip first = take(row1, cp);
+        LetterChip second = take(row2, cp);
         int left = chipTotal - 2 * (k + 1);
         String letter = new String(Character.toChars(cp));
-        for (Chip chip : new Chip[]{first, second}) {
+        for (LetterChip chip : new LetterChip[]{first, second}) {
             addStyle(chip.label, "chip-off");
             chip.label.setAccessibleText(letter + ", crossed out.");
         }
         status.setText(left == 0
                 ? "Every letter cancelled out."
                 : left + (left == 1 ? " letter remains." : " letters remain."));
-        Chip[] pair = new Chip[]{first, second};
+        LetterChip[] pair = new LetterChip[]{first, second};
         appliedPairs.add(pair);
         return pair;
     }
@@ -363,11 +374,11 @@ public final class EliminationView extends VBox {
      * Survivors as the schedule will see them, computed from data rather
      * than live flags (the whole timeline is built before a frame fires).
      */
-    private List<Chip> plannedSurvivors() {
-        Set<Chip> doomed = new HashSet<>();
+    private List<LetterChip> plannedSurvivors() {
+        Set<LetterChip> doomed = new HashSet<>();
         for (int cp : pops) {
-            for (List<Chip> row : List.of(row1, row2)) {
-                for (Chip chip : row) {
+            for (List<LetterChip> row : List.of(row1, row2)) {
+                for (LetterChip chip : row) {
                     if (!doomed.contains(chip) && chip.codePoint == cp) {
                         doomed.add(chip);
                         break;
@@ -375,9 +386,9 @@ public final class EliminationView extends VBox {
                 }
             }
         }
-        List<Chip> survivors = new ArrayList<>();
-        for (List<Chip> row : List.of(row1, row2)) {
-            for (Chip chip : row) {
+        List<LetterChip> survivors = new ArrayList<>();
+        for (List<LetterChip> row : List.of(row1, row2)) {
+            for (LetterChip chip : row) {
                 if (!doomed.contains(chip)) {
                     survivors.add(chip);
                 }
@@ -389,20 +400,20 @@ public final class EliminationView extends VBox {
     /** Planned survivor letters, for tests. */
     List<String> plannedSurvivorLetters() {
         List<String> letters = new ArrayList<>();
-        for (Chip chip : plannedSurvivors()) {
+        for (LetterChip chip : plannedSurvivors()) {
             letters.add(new String(Character.toChars(chip.codePoint)));
         }
         return letters;
     }
 
-    private List<Chip> survivors() {
-        List<Chip> survivors = new ArrayList<>();
-        for (Chip chip : row1) {
+    private List<LetterChip> survivors() {
+        List<LetterChip> survivors = new ArrayList<>();
+        for (LetterChip chip : row1) {
             if (!chip.taken) {
                 survivors.add(chip);
             }
         }
-        for (Chip chip : row2) {
+        for (LetterChip chip : row2) {
             if (!chip.taken) {
                 survivors.add(chip);
             }
@@ -411,7 +422,7 @@ public final class EliminationView extends VBox {
     }
 
     /** Marks a chip as counted survivor number n. */
-    private static void applyCount(Chip chip, int n) {
+    private static void applyCount(LetterChip chip, int n) {
         addStyle(chip.box, "chip-count");
         chip.label.setAccessibleText(
                 new String(Character.toChars(chip.codePoint)) + ", counts as " + n + ".");
@@ -487,14 +498,14 @@ public final class EliminationView extends VBox {
         for (int k = appliedPairs.size(); k < pops.size(); k++) {
             prepareCancel(k);
         }
-        for (Chip[] pair : appliedPairs) {
-            for (Chip chip : pair) {
+        for (LetterChip[] pair : appliedPairs) {
+            for (LetterChip chip : pair) {
                 chip.slash.setVisible(true);
                 chip.slash.setEndX(30);
                 chip.slash.setEndY(36);
             }
         }
-        List<Chip> counted = survivors();
+        List<LetterChip> counted = survivors();
         for (int i = 0; i < counted.size(); i++) {
             applyCount(counted.get(i), i + 1);
         }
@@ -518,17 +529,9 @@ public final class EliminationView extends VBox {
     }
 
     /** Draws a pen slash across a chip or tile. */
-    private void drawSlash(Line slash, double endX, double endY) {
-        slash.setVisible(true);
-        Timeline draw = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(slash.endXProperty(), 0),
-                        new KeyValue(slash.endYProperty(), 0)),
-                new KeyFrame(Duration.millis(240),
-                        new KeyValue(slash.endXProperty(), endX),
-                        new KeyValue(slash.endYProperty(), endY)));
-        running.add(draw);
-        draw.play();
+    /** Slash that stops with everything else on skip. */
+    private void playSlash(Line slash, double endX, double endY) {
+        running.add(LetterChip.drawSlash(slash, endX, endY));
     }
 
     /** Startled wiggle before the fall. */

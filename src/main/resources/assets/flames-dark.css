@@ -179,6 +179,11 @@
     -fx-border-color: #E8B54A;
 }
 
+.chip-pick {
+    -fx-border-color: #E8B54A;
+    -fx-background-color: #4A3B22;
+}
+
 .slash {
     -fx-stroke: #E0604F;
     -fx-stroke-width: 3;

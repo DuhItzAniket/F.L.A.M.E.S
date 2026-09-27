@@ -353,6 +353,35 @@ class ViewTest {
     }
 
     @Test
+    void manualCrossingCountsLeftovers() throws Exception {
+        fx(() -> {
+            AtomicInteger counted = new AtomicInteger(-1);
+            ManualView view = new ManualView("john", "jane", testSounds(), counted::set, () -> {
+            });
+            List<StackPane> chips = new ArrayList<>();
+            collect(view.getChildren(), StackPane.class, chips);
+            List<StackPane> boxes = chips.stream()
+                    .filter(p -> p.getStyleClass().contains("chip"))
+                    .toList();
+            assertEquals(8, boxes.size());
+            assertEquals("8 letters will count.",
+                    labeled(view.getChildren(), "subtitle").getText());
+            boxes.get(0).getOnMouseClicked().handle(null);
+            boxes.get(5).getOnMouseClicked().handle(null);
+            assertEquals("8 letters will count.",
+                    labeled(view.getChildren(), "subtitle").getText());
+            boxes.get(4).getOnMouseClicked().handle(null);
+            assertEquals("6 letters will count.",
+                    labeled(view.getChildren(), "subtitle").getText());
+            List<Button> buttons = new ArrayList<>();
+            collect(view.getChildren(), Button.class, buttons);
+            buttons.stream().filter(b -> b.getText().equals("Count it")).findFirst()
+                    .orElseThrow().fire();
+            assertEquals(6, counted.get());
+        });
+    }
+
+    @Test
     void bothThemesShipTheirStylesheet() {
         assertNotNull(MainApp.class.getResource("/assets/flames.css"));
         assertNotNull(MainApp.class.getResource("/assets/flames-dark.css"));

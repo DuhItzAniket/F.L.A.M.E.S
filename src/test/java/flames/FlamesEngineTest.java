@@ -181,6 +181,17 @@ class FlamesEngineTest {
     }
 
     @Test
+    void explicitCountOverridesRemaining() {
+        assertEquals(FlamesEngine.calculate("john", "jane"),
+                FlamesEngine.calculate("john", "jane", 4));
+        FlamesOutcome one = FlamesEngine.calculate("john", "jane", 1);
+        assertEquals(1, one.remainingCount());
+        assertEquals(FlamesCategory.SIBLINGS, one.category());
+        assertThrows(IllegalArgumentException.class,
+                () -> FlamesEngine.calculate("john", "jane", -1));
+    }
+
+    @Test
     void everyCategoryResolvesFromItsLetter() {
         for (FlamesCategory category : FlamesCategory.values()) {
             assertEquals(category, FlamesCategory.fromLetter(category.letter()));
