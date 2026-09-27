@@ -11,7 +11,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -70,6 +69,7 @@ public final class MainApp extends Application {
             sounds.play("click");
             HistoryDialog.show(stage, stylesheet, history, (first, second) -> {
                 inputView.keepNames(first, second);
+                inputView.setManual(false);
                 calculate(first, second);
             });
         });
@@ -87,9 +87,9 @@ public final class MainApp extends Application {
 
         stage.setTitle("F.L.A.M.E.S");
         for (String size : new String[]{"16", "32", "48"}) {
-            InputStream icon = getClass().getResourceAsStream("/assets/icon/icon-" + size + ".png");
+            Image icon = loadIcon("/assets/icon/icon-" + size + ".png");
             if (icon != null) {
-                stage.getIcons().add(new Image(icon));
+                stage.getIcons().add(icon);
             }
         }
         stage.setMinWidth(480);
@@ -115,6 +115,19 @@ public final class MainApp extends Application {
             if (stylesheet != null) {
                 scene.getStylesheets().add(stylesheet);
             }
+        }
+    }
+
+    /** Loads a bundled image, or null when missing (never throws). */
+    private static Image loadIcon(String path) {
+        try (InputStream in = MainApp.class.getResourceAsStream(path)) {
+            if (in == null) {
+                return null;
+            }
+            Image image = new Image(in);
+            return image.isError() ? null : image;
+        } catch (IOException | RuntimeException failed) {
+            return null;
         }
     }
 

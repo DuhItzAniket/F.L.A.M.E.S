@@ -33,10 +33,17 @@ public final class InputView extends VBox {
         Label title = new Label("F.L.A.M.E.S");
         title.getStyleClass().add("title");
 
-        ImageView logo = new ImageView(
-                new Image(getClass().getResourceAsStream("/assets/icon/icon-128.png")));
-        logo.setFitHeight(84);
-        logo.setPreserveRatio(true);
+        ImageView logo = null;
+        try (java.io.InputStream icon =
+                getClass().getResourceAsStream("/assets/icon/icon-128.png")) {
+            if (icon != null) {
+                logo = new ImageView(new Image(icon));
+                logo.setFitHeight(84);
+                logo.setPreserveRatio(true);
+            }
+        } catch (java.io.IOException ignored) {
+            // Header works fine without the logo.
+        }
 
         Label subtitle = new Label("Two names in. One verdict out.");
         subtitle.getStyleClass().add("subtitle");
@@ -82,12 +89,19 @@ public final class InputView extends VBox {
         Label disclaimer = new Label("Just for fun — not a fortune teller.");
         disclaimer.getStyleClass().add("hint");
 
-        getChildren().addAll(logo, title, subtitle, firstLabel, firstName, firstCount,
+        if (logo != null) {
+            getChildren().add(logo);
+        }
+        getChildren().addAll(title, subtitle, firstLabel, firstName, firstCount,
                 secondLabel, secondName, secondCount, error, manual, actions, disclaimer);
     }
 
     public boolean isManual() {
         return manual.isSelected();
+    }
+
+    public void setManual(boolean manualMode) {
+        manual.setSelected(manualMode);
     }
 
     /** Shows an inline error, or hides it when message is null. */

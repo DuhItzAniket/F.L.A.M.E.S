@@ -174,6 +174,12 @@ class FlamesEngineTest {
     }
 
     @Test
+    void eliminationRoundsRejectNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> FlamesEngine.eliminationRounds(-1));
+    }
+
+    @Test
     void bondPercentMeasuresOverlap() {
         assertEquals(50, FlamesEngine.bondPercent("john", "jane"));
         assertEquals(100, FlamesEngine.bondPercent("anna", "anna"));

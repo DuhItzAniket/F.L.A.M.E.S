@@ -32,8 +32,12 @@ public final class ManualView extends VBox {
     public ManualView(String name1, String name2, SoundBank sounds,
             IntConsumer onDone, Runnable onBack) {
         super(14);
-        this.sounds = sounds;
-        this.onDone = onDone;
+        this.sounds = java.util.Objects.requireNonNull(sounds, "sounds");
+        this.onDone = java.util.Objects.requireNonNull(onDone, "onDone");
+        java.util.Objects.requireNonNull(onBack, "onBack");
+        if (name1 == null || name2 == null) {
+            throw new IllegalArgumentException("Names cannot be null");
+        }
         setAlignment(Pos.CENTER);
         setPadding(new Insets(32));
         setMaxWidth(520);
@@ -150,6 +154,7 @@ public final class ManualView extends VBox {
         }
         sounds.play("pop");
         refreshCounter();
+        status.setText("Tap a letter, then its match in the other name.");
     }
 
     private boolean sameRow(LetterChip a, LetterChip b) {

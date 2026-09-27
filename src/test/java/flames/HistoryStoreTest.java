@@ -66,6 +66,8 @@ class HistoryStoreTest {
         Path file = dir.resolve("history.tsv");
         Files.writeString(file, "garbage\n"
                 + Instant.now() + "\tromeo\tjuliet\tM\t6\tauto\n"
+                + Instant.now() + "\tromeo\tjuliet\tX\t6\tauto\n"
+                + Instant.now() + "\tromeo\tjuliet\tM\t-6\tauto\n"
                 + "a\tb\n");
         List<HistoryStore.Entry> entries = store().load();
         assertEquals(1, entries.size());

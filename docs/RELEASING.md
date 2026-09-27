@@ -1,27 +1,27 @@
 # Releasing
 
-Versioning: SemVer. Development versions are `0.x.y`; the first stable
-release is `1.0.0` (Phase 10 gate).
+Versioning: SemVer. `1.0.0` is current; bump `pom.xml` + `package.bat`
+`VERSION` together for the next feature milestone.
 
 ## What CI produces
 
-Every push/PR to `main` runs `mvn -B verify` and uploads `target/flames-*.jar`
-as the `flames-jar` artifact. The jar is a build artifact, not a standalone
-distributable — JavaFX modules come from Maven Central at build time, so the
-supported launch paths are below.
+Every push/PR to `main` runs `./mvnw -B clean verify` and uploads
+`target/flames-*.jar` as the `flames-jar` artifact. The jar is a build
+artifact, not a standalone distributable — the shippable is the
+`package.bat` installer below.
 
 ## Run from source (all platforms)
 
-Requires JDK 21 + Maven 3.9+:
+Requires JDK 21 only (the wrapper bootstraps Maven 3.9.9):
 
 ```sh
-./mvnw javafx:run
+./mvnw javafx:run   # mvnw.cmd on Windows; needs a display
 ```
 
 ## Versioned jar (verified)
 
 ```sh
-./mvnw -B verify   # runs tests, produces target/flames-<version>.jar
+./mvnw -B clean verify   # runs tests, produces target/flames-<version>.jar
 ```
 
 ## Windows installer (verified 1.0.0)
@@ -52,10 +52,8 @@ Notes from the trenches:
 
 ## Release checklist
 
-## Release checklist
-
 1. `docs/PHASE_STATUS.md` shows every phase COMPLETE.
-2. `mvn -B verify` green on a clean checkout.
-3. Version bumped in `pom.xml`; README status final.
+2. `./mvnw -B clean verify` green on a clean checkout.
+3. Version bumped in `pom.xml` + `package.bat`; README status final.
 4. `git tag v<version>` on the release commit; push with `git push --tags`.
-5. Attach the CI jar (and installer once verified) to the GitHub release.
+5. Attach the CI jar and the `package.bat` exe to the GitHub release.

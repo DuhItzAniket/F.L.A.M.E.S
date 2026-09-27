@@ -285,3 +285,24 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   correct; installed exe alive 20 s+. Left installed for the user.
 - Verification: suite stays 50 green (`verify` on the packaging commit
   is build-only for the new plugin + script).
+
+## Phase 22 — Genre research + plan — COMPLETE
+
+- `docs/RESEARCH.md`: real sources (Wikipedia rules variants,
+  popular calculators' breakdowns/meters/sharing/history/manual mode,
+  JPackageScriptFX packaging recipe). Explicit no-AI/no-GPU verdict
+  with reasons; group mode skipped (no canonical rules).
+- Pushed alone as the plan commit.
+
+## Phase 28 — Final gate + scan — COMPLETE (this commit)
+
+- Agentic scan (code + docs) fixed: snapshot under opacity-0 parent,
+  PNG suffix, replay forcing auto, `eliminationRounds(-1)` guard,
+  manifest → `flames.Launcher`, package.bat JDK guard + VERSION +
+  full verify, HistoryStore atomic write + strict parse + surrogate-safe
+  truncate, manual status reset + null guard, icon/logo null-safety.
+  Deliberately left: 240 ms slash orphans on manual exit, swap
+  re-entrancy, FX-thread micro-IO (all analyzed harmless).
+- Full doc sync (counts, versions, flows, tokens, commands).
+- Verification: suite 50 → 52 green; clean verify; live launch log
+  clean; tree clean; pushed.

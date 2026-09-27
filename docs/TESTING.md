@@ -1,25 +1,37 @@
 # Testing
 
 - Framework: JUnit 5 (`junit-jupiter`, pinned in `pom.xml`).
-- Run: `mvn verify` (JDK 21). Full suite must stay under a minute.
-- Domain tests (`FlamesEngineTest`) cover: normalization (case, spaces,
-  punctuation, digits, Unicode), cross-cancellation counts incl. repeats,
-  a hand-traced outcome (`john`/`jane` → Enemies, order M·L·F·A·S),
+- Run: `./mvnw -B clean verify` (JDK 21 only; the wrapper bootstraps
+  Maven). Full suite must stay under two minutes (one headless
+  play-advance test sleeps ~4.5 s).
+- Domain tests (`FlamesEngineTest`, 22 tests) cover: normalization (case,
+  spaces, punctuation, digits, Unicode), cross-cancellation counts incl.
+  repeats, a hand-traced outcome (`john`/`jane` → Enemies, order M·L·F·A·S),
   the zero-count rule (identical names → Marriage), elimination invariants
   (5 removals, survivor stands apart), determinism, display-name
-  preservation, and rejection of blank/punctuation-only/null inputs with
-  messages naming the offending field.
+  preservation, rejection of blank/punctuation-only/null inputs with
+  messages naming the offending field, plus the newer surface:
+  `cancellationOrder` (incl. count relation), `eliminationRounds`
+  (hand-traced, negative rejected), `bondPercent` (0/50/100),
+  explicit-count override (incl. negative rejected), and category
+  content/letter checks.
 - Rule: every bug fix ships with a regression test. Never delete a test
   because it is inconvenient.
-- View tests (`ViewTest`, 12 tests) run headless via Monocle
+- View tests (`ViewTest`, 20 tests) run headless via Monocle
   (`org.testfx:openjfx-monocle`, test scope; Glass/Prism properties in the
   surefire config): error show/clear cycle, submit wiring with both names,
-  verdict content incl. the zero-count caption, six-tile initial layout,
-  chip layout, fail-fast construction on non-FLAMES letters, both themes
-  shipping, theme class parity, and skip-path end states (exactly-once
-  handoff, dropped tiles, completed slashes — incl. skip-right-after-play,
-  the regression test for a once-fatal double-cancel bug). Animation
-  timing stays a manual eyes-on check.
+  manual-mode flag, verdict content incl. the zero-count caption, recap
+  rows + bond value, six-tile initial layout, chip layout, manual
+  click-through (mismatch guidance, cross, count, done), fail-fast
+  construction on non-FLAMES letters, both themes shipping, theme class
+  parity, ember bursts, verdict reveal, planned survivors, play-advance
+  (pins timeline progress headless), and skip-path end states
+  (exactly-once handoff, dropped tiles, completed slashes — incl.
+  skip-right-after-play, the regression test for a once-fatal
+  double-cancel bug). Animation feel stays a manual eyes-on check.
+- Store tests (`SettingsTest` 5, `HistoryStoreTest` 5): preference
+  round-trips incl. clamping/normalization, history cap/order/clear,
+  corrupt-line tolerance.
 - Rendered-UI verification beyond that is manual (`run.bat` needs eyes).
 - CI (`.github/workflows/ci.yml`) runs `./mvnw -B clean verify` on push/PR
   to `main`.

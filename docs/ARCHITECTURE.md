@@ -3,14 +3,20 @@
 Small app, small architecture. One package (`flames`), three layers by
 dependency direction:
 
-- **Domain** — `FlamesEngine`, `FlamesCategory`, `FlamesOutcome`.
-  Pure Java, zero JavaFX imports. All game rules live here and only here.
-- **Presentation** — `MainApp` + `InputView`, `ResultView`,
-  `EliminationView` (staged animation), `SettingsDialog`, `SoundBank`.
+- **Domain** — `FlamesEngine`, `FlamesCategory`, `FlamesOutcome`,
+  `HistoryStore` (local file, still zero JavaFX).
+  Pure Java. All game rules live here and only here.
+- **Presentation** — `MainApp` (+ `Launcher`, the plain entry point
+  jpackage needs), `InputView`, `ManualView`, `ResultView`,
+  `EliminationView` (staged animation), `SettingsDialog`,
+  `HistoryDialog`, `SoundBank`, `EmberField`, `LetterChip`, `Settings`.
   Thin: reads input, calls the engine, renders the outcome. Never
   reimplements elimination (the view re-simulates the ring only to place
   hop highlights, with a tripwire asserting the kill order matches).
-- **Infrastructure** — Maven build, CI workflow, (Phase 8) packaging.
+- **Infrastructure** — Maven build (+ `copy-dependencies` for packaging),
+  CI workflow, `run.bat` (dev launch), `package.bat` (app-image + exe
+  via jpackage; needs WiX 3.x, plain `Launcher` class, and the app jar
+  inside `--input` — all verified, see `docs/RELEASING.md`).
 
 Key decisions:
 

@@ -82,7 +82,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>flames.MainApp</mainClass>
+              <mainClass>flames.Launcher</mainClass>
               <addClasspath>true</addClasspath>
             </manifest>
           </archive>

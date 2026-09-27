@@ -67,3 +67,20 @@ never color alone.
 - Styling: `src/main/resources/assets/flames.css` (light) and
   `flames-dark.css` (dark). Every asset is referenced by the app except
   `icon-256.png` (kept as the HiDPI spare inside `flames.ico`).
+
+## Component classes (both themes, parity-tested)
+
+- Steps: `.stepper` row, `.step` (todo), `.step-now` (ember bold),
+  `.step-done` (ink/cream).
+- Recap: `.recap` 13 px soft rows; meter `.bond-bar` (track line color,
+  bar ember, 10 px round).
+- Chips: `.chip` box (card bg, ink border, radius 8, 40×46),
+  `.chip-label` (Gentium 18 bold), `.chip-off` (faint text),
+  `.chip-count`/`.chip-pick` (gold border), slash `.slash` (ember, 3 px).
+- Tiles: `.tile` box (58×66), `.tile-label` (Gentium 30 bold),
+  `.tile-hop` (gold border + tint), `.tile-echo` (dimmer gold border),
+  `.tile-out` (faint border; inner label faint), `.tile-winner`
+  (ember bg; inner label cream).
+- Card: `.card` (card bg, ink border, radius 14, padding 28),
+  `.card-title` (Gentium 28 bold). History list scroll: `.history-scroll`
+  (transparent).

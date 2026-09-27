@@ -25,12 +25,12 @@ no tracking — fully offline, names never leave the machine.
 | Concern | Choice | Why |
 |---|---|---|
 | Language | Java 21 LTS | Modern LTS; JavaFX 21 targets it |
-| UI | JavaFX 21.0.4 (`org.openjfx`) | Visually rich desktop UI, CSS styling; owner's choice |
+| UI | JavaFX 21.0.2 (`org.openjfx`, aligned with Monocle test runtime) | Visually rich desktop UI, CSS styling; owner's choice |
 | Build | Maven 3.9.9, plugins pinned in `pom.xml` | Standard layout, reproducible, CI-friendly |
 | Tests | JUnit 5.11.4 (via `junit-jupiter`) + Monocle headless views | Standard unit testing, UI tests without a display |
-| CI | GitHub Actions, Ubuntu + Temurin 21 | `mvn -B verify` on push/PR |
+| CI | GitHub Actions, Ubuntu + Temurin 21 | `./mvnw -B clean verify` on push/PR |
 | Assets | Generated PNG/ICO from `tools/IconGenerator.java` (pure Java2D), synthesized WAVs from `tools/SoundGenerator.java` | Maintainable, no downloads, no licensing risk |
-| Packaging (later) | `javafx-maven-plugin` 0.0.8 now; `jpackage` in Phase 8 | Defer native installers until UI is done |
+| Packaging (later) | `package.bat`: app-image + exe via `jpackage` (Phase 27) | Verified install + launch |
 
 Non-goals: no new dependencies beyond JavaFX/JUnit; no network code;
 no analytics/telemetry.
@@ -43,20 +43,27 @@ flames/                  # engine, categories, outcome, views, settings, sounds
   FlamesCategory.java    # enum F/L/A/M/E/S + titles + meanings
   FlamesOutcome.java     # record: category, count, elimination order, display names
   InputView.java         # name-entry form with inline errors
+  ManualView.java        # cross-it-yourself crossing stage
   EliminationView.java   # staged animation replaying engine data (no JavaFX in engine)
-  ResultView.java        # verdict moment
+  ResultView.java        # verdict moment + share card
+  LetterChip.java        # shared clickable letter tile
+  EmberField.java        # particle layer (ambient + bursts)
   Settings.java          # persisted preferences (theme, sound, volume)
   SoundBank.java         # bundled WAV effects, audio-safe playback
   SettingsDialog.java    # gear-button dialog
+  HistoryStore.java      # local game history (file, still no JavaFX)
+  HistoryDialog.java     # history list with replay
   MainApp.java           # JavaFX entry point (presentation only, thin)
+  Launcher.java          # plain entry point for jpackage
 ```
 
 Rules: domain never imports JavaFX (testable headless); animation replays the
 engine's elimination order — never a duplicate algorithm; UI stays thin.
 
 > Historical note: this plan was written at Phase 0 for phases 0–10.
-> Phases 11–17 (sound, themes, animation rework, `run.bat`) are logged in
-> `docs/PHASE_STATUS.md`, which is the running record.
+> Phases 11–27 (sound, themes, animation, launcher, research, recap,
+> manual, history, share, installer) are logged in `docs/PHASE_STATUS.md`,
+> which is the running record.
 
 ## 5. Phase breakdown
 
@@ -100,14 +107,17 @@ Phase 5 and an algorithm note with Phase 2.
 
 ## 8. Asset strategy
 
-SVG sources kept in `src/main/resources/assets/`, PNG renders only where the
-platform needs them. Every asset referenced by the app or deleted. Icon
-designed in Phase 5 with small-size legibility as acceptance criterion.
+Generated assets only: PNGs + ICO from `tools/IconGenerator.java`
+(pure Java2D), WAVs from `tools/SoundGenerator.java` (pure synthesis).
+No downloads, no licensing risk. Icon designed for small-size
+legibility. `icon-256.png` is a HiDPI spare inside `flames.ico`.
 
 ## 9. Release strategy
 
-`main` always builds green. No release until Phase 10. Version `0.x.y`
-during development; `1.0.0` at the final gate with `jpackage` artifacts.
+`main` always builds green. Version stays `1.0.0` until the next
+feature milestone earns a bump (post-gate phases 11+ shipped user
+value without one — next bump goes with the installer release).
+`package.bat` produces the app-image + exe; see `docs/RELEASING.md`.
 
 ## 10. Definition of done (every phase)
 

@@ -394,6 +394,19 @@ class ViewTest {
     }
 
     @Test
+    void manualModeFlagRoundTrips() throws Exception {
+        fx(() -> {
+            InputView view = new InputView((a, b) -> {
+            });
+            assertFalse(view.isManual());
+            view.setManual(true);
+            assertTrue(view.isManual());
+            view.setManual(false);
+            assertFalse(view.isManual());
+        });
+    }
+
+    @Test
     void bothThemesShipTheirStylesheet() {
         assertNotNull(MainApp.class.getResource("/assets/flames.css"));
         assertNotNull(MainApp.class.getResource("/assets/flames-dark.css"));

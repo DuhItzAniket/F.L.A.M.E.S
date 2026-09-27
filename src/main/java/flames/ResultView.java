@@ -160,12 +160,17 @@ public final class ResultView extends VBox {
         if (file == null) {
             return;
         }
+        if (!file.getName().toLowerCase(Locale.ROOT).endsWith(".png")) {
+            file = new File(file.getParent(), file.getName() + ".png");
+        }
         try {
             VBox card = buildCard(outcome);
+            card.applyCss();
+            card.layout();
             StackPane layer = new StackPane(card);
-            layer.setOpacity(0);
             layer.setMouseTransparent(true);
             layer.setPickOnBounds(false);
+            layer.setTranslateX(-10000);
             Node root = getScene().getRoot();
             if (!(root instanceof StackPane)) {
                 flash(button, "Save failed");
@@ -229,10 +234,11 @@ public final class ResultView extends VBox {
     }
 
     private static String slug(String name) {
-        String slug = FlamesEngine.normalize(name).toLowerCase(Locale.ROOT);
-        if (slug.length() > 20) {
-            slug = slug.substring(0, 20);
-        }
+        String flat = FlamesEngine.normalize(name);
+        int codepoints = flat.codePointCount(0, flat.length());
+        String slug = codepoints > 20
+                ? flat.substring(0, flat.offsetByCodePoints(0, 20))
+                : flat;
         return slug.isEmpty() ? "names" : slug;
     }
 

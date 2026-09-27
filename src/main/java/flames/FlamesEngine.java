@@ -143,6 +143,9 @@ public final class FlamesEngine {
      * same rule as {@link #calculate}). Always 5 rounds for F·L·A·M·E·S.
      */
     public static List<Round> eliminationRounds(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("Count cannot be negative: " + count);
+        }
         List<Character> ring = new ArrayList<>(LETTERS);
         int step = count == 0 ? ring.size() : count;
         List<Round> rounds = new ArrayList<>();

@@ -70,7 +70,9 @@ public final class HistoryStore {
 
     private void write(List<Entry> entries) {
         try {
-            Files.createDirectories(file.getParent());
+            if (file.getParent() != null) {
+                Files.createDirectories(file.getParent());
+            }
             List<String> lines = new ArrayList<>();
             for (Entry entry : entries) {
                 lines.add(String.join("\t",
@@ -81,7 +83,14 @@ public final class HistoryStore {
                         String.valueOf(entry.count()),
                         entry.manual() ? "manual" : "auto"));
             }
-            Files.write(file, lines, StandardCharsets.UTF_8);
+            Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
+            Files.write(tmp, lines, StandardCharsets.UTF_8);
+            try {
+                Files.move(tmp, file, java.nio.file.StandardCopyOption.ATOMIC_MOVE,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException notAtomic) {
+                Files.move(tmp, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException ignored) {
             // Best effort.
         }
@@ -90,7 +99,8 @@ public final class HistoryStore {
     private static Entry parse(String line) {
         String[] parts = line.split("\t", -1);
         if (parts.length != 6 || parts[0].isBlank() || parts[1].isBlank()
-                || parts[2].isBlank() || parts[3].length() != 1) {
+                || parts[2].isBlank() || parts[3].length() != 1
+                || "FLAMES".indexOf(parts[3].charAt(0)) < 0) {
             return null;
         }
         int count;
@@ -99,12 +109,19 @@ public final class HistoryStore {
         } catch (NumberFormatException bad) {
             return null;
         }
+        if (count < 0) {
+            return null;
+        }
         return new Entry(parts[0], parts[1], parts[2], parts[3].charAt(0),
                 count, "manual".equals(parts[5]));
     }
 
     private static String clean(String name) {
         String flat = name.replaceAll("[\\t\\r\\n|]", " ").strip();
-        return flat.length() > 60 ? flat.substring(0, 60) : flat;
+        int codepoints = flat.codePointCount(0, flat.length());
+        if (codepoints <= 60) {
+            return flat;
+        }
+        return flat.substring(0, flat.offsetByCodePoints(0, 60));
     }
 }
