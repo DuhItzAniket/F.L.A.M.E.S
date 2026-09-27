@@ -264,3 +264,13 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   fully tested); History button top-left with dialog (replay refills +
   auto-runs, clear wipes); every verdict recorded with mode flag.
 - Verification: suite 44 → 49 green; live launch log clean.
+
+## Phase 26 — Result card PNG + clipboard — COMPLETE
+
+- Share row on the result view: Save card renders a styled verdict card
+  (logo, names, word, meaning, bond) to PNG via FileChooser; Copy
+  result puts the one-line verdict on the clipboard. Both confirm
+  inline ("Saved!"/"Copied!") and fail soft. `javafx-swing` added for
+  the FX→PNG bridge.
+- Verification: suite 49 → 50 green (share text + card build);
+  live launch log clean. Pixel proof left to eyes-on (save a card).

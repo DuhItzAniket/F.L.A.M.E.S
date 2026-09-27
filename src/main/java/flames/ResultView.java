@@ -1,19 +1,37 @@
 package flames;
 
 import javafx.geometry.Insets;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
+
+import javax.imageio.ImageIO;
 
 /** The verdict moment: who, what it means, and how to play again. */
 public final class ResultView extends VBox {
@@ -93,8 +111,137 @@ public final class ResultView extends VBox {
         HBox actions = new HBox(12, change, again);
         actions.setAlignment(Pos.CENTER);
 
+        Button save = new Button("Save card");
+        save.getStyleClass().add("btn-ghost");
+        save.setTooltip(new Tooltip("Save this verdict as a PNG image"));
+        save.setOnAction(e -> saveCard(save, outcome));
+
+        Button copy = new Button("Copy result");
+        copy.getStyleClass().add("btn-ghost");
+        copy.setTooltip(new Tooltip("Copy the verdict as text"));
+        copy.setOnAction(e -> copyResult(copy, outcome));
+
+        HBox share = new HBox(12, save, copy);
+        share.setAlignment(Pos.CENTER);
+
         getChildren().addAll(stepper, names, caption, word, meaning,
-                bondLabel, bondBar, recapTitle, recap, actions);
+                bondLabel, bondBar, recapTitle, recap, actions, share);
+    }
+
+    /** Plain-text verdict for clipboard and tests. */
+    static String shareText(FlamesOutcome outcome) {
+        return outcome.displayName1() + " \u2665 " + outcome.displayName2()
+                + " \u2192 " + outcome.category().title()
+                + " (F.L.A.M.E.S)";
+    }
+
+    private void copyResult(Button button, FlamesOutcome outcome) {
+        try {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(shareText(outcome));
+            Clipboard.getSystemClipboard().setContent(content);
+            flash(button, "Copied!");
+        } catch (RuntimeException failed) {
+            flash(button, "Copy failed");
+        }
+    }
+
+    private void saveCard(Button button, FlamesOutcome outcome) {
+        if (getScene() == null) {
+            flash(button, "Save failed");
+            return;
+        }
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save verdict card");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PNG image", "*.png"));
+        chooser.setInitialFileName(cardFileName(outcome));
+        File file = chooser.showSaveDialog(getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+        try {
+            VBox card = buildCard(outcome);
+            StackPane layer = new StackPane(card);
+            layer.setOpacity(0);
+            layer.setMouseTransparent(true);
+            layer.setPickOnBounds(false);
+            Node root = getScene().getRoot();
+            if (!(root instanceof StackPane)) {
+                flash(button, "Save failed");
+                return;
+            }
+            ((StackPane) root).getChildren().add(layer);
+            WritableImage image = card.snapshot(new SnapshotParameters(), null);
+            ((StackPane) root).getChildren().remove(layer);
+            if (image == null) {
+                flash(button, "Save failed");
+                return;
+            }
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            flash(button, "Saved!");
+        } catch (RuntimeException | IOException failed) {
+            flash(button, "Save failed");
+        }
+    }
+
+    /** The shareable card; also used by tests for construction. */
+    static VBox buildCard(FlamesOutcome outcome) {
+        VBox card = new VBox(10);
+        card.getStyleClass().add("card");
+        card.setAlignment(Pos.CENTER);
+        card.setMaxWidth(440);
+        try (InputStream icon =
+                ResultView.class.getResourceAsStream("/assets/icon/icon-128.png")) {
+            if (icon != null) {
+                ImageView logo = new ImageView(new Image(icon));
+                logo.setFitHeight(64);
+                logo.setPreserveRatio(true);
+                card.getChildren().add(logo);
+            }
+        } catch (IOException ignored) {
+            // Card works fine without the logo.
+        }
+        Label brand = new Label("F.L.A.M.E.S");
+        brand.getStyleClass().add("card-title");
+        Label names = new Label(outcome.displayName1() + "  \u2665  " + outcome.displayName2());
+        names.getStyleClass().add("names");
+        names.setWrapText(true);
+        names.setAlignment(Pos.CENTER);
+        names.setTextAlignment(TextAlignment.CENTER);
+        Label word = new Label(outcome.category().title());
+        word.getStyleClass().add("word");
+        Label meaning = new Label(outcome.category().meaning());
+        meaning.getStyleClass().add("meaning");
+        meaning.setWrapText(true);
+        meaning.setAlignment(Pos.CENTER);
+        meaning.setTextAlignment(TextAlignment.CENTER);
+        Label foot = new Label("Bond " + FlamesEngine.bondPercent(
+                outcome.displayName1(), outcome.displayName2()) + "% · just for fun");
+        foot.getStyleClass().add("hint");
+        card.getChildren().addAll(brand, names, word, meaning, foot);
+        return card;
+    }
+
+    private static String cardFileName(FlamesOutcome outcome) {
+        return "flames-" + slug(outcome.displayName1())
+                + "-" + slug(outcome.displayName2()) + ".png";
+    }
+
+    private static String slug(String name) {
+        String slug = FlamesEngine.normalize(name).toLowerCase(Locale.ROOT);
+        if (slug.length() > 20) {
+            slug = slug.substring(0, 20);
+        }
+        return slug.isEmpty() ? "names" : slug;
+    }
+
+    private static void flash(Button button, String text) {
+        String original = button.getText();
+        button.setText(text);
+        PauseTransition pause = new PauseTransition(Duration.millis(1400));
+        pause.setOnFinished(e -> button.setText(original));
+        pause.play();
     }
 
     /** Drops the verdict word in once the view is shown. */

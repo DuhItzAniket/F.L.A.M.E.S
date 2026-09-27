@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -378,6 +379,17 @@ class ViewTest {
             buttons.stream().filter(b -> b.getText().equals("Count it")).findFirst()
                     .orElseThrow().fire();
             assertEquals(6, counted.get());
+        });
+    }
+
+    @Test
+    void shareTextAndCardBuild() throws Exception {
+        FlamesOutcome outcome = FlamesEngine.calculate("john", "jane");
+        assertEquals("john \u2665 jane \u2192 Enemies (F.L.A.M.E.S)",
+                ResultView.shareText(outcome));
+        fx(() -> {
+            VBox card = ResultView.buildCard(outcome);
+            assertFalse(card.getChildren().isEmpty());
         });
     }
 

@@ -240,6 +240,23 @@
     -fx-background-insets: 0;
 }
 
+.card {
+    -fx-background-color: #FFFDF6;
+    -fx-background-radius: 14px;
+    -fx-border-color: #2B2118;
+    -fx-border-radius: 14px;
+    -fx-border-width: 2px;
+    -fx-padding: 28px;
+    -fx-alignment: center;
+}
+
+.card-title {
+    -fx-font-family: 'Gentium Book Plus';
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2118;
+}
+
 .history-scroll {
     -fx-background-color: transparent;
 }
