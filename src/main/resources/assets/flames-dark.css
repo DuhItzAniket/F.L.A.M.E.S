@@ -239,6 +239,14 @@
     -fx-background-insets: 0;
 }
 
+.history-scroll {
+    -fx-background-color: transparent;
+}
+
+.history-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
 .icon-btn {
     -fx-background-color: transparent;
     -fx-background-radius: 10px;

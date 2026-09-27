@@ -257,3 +257,10 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   engine math). Mode checkbox on the input view.
 - Verification: suite 42 → 44 green (incl. headless click-through);
   live launch log clean.
+
+## Phase 25 — Local history + replay — COMPLETE
+
+- `HistoryStore` (TSV under `~/.flames`, capped at 50, corrupt-tolerant,
+  fully tested); History button top-left with dialog (replay refills +
+  auto-runs, clear wipes); every verdict recorded with mode flag.
+- Verification: suite 44 → 49 green; live launch log clean.

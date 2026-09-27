@@ -3,6 +3,7 @@ package flames;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Instant;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
@@ -33,6 +34,7 @@ public final class MainApp extends Application {
     private InputView inputView;
     private Scene scene;
     private final Settings settings = new Settings();
+    private final HistoryStore history = new HistoryStore();
     private SoundBank sounds;
     private EmberField embers;
     private String stylesheet;
@@ -61,7 +63,20 @@ public final class MainApp extends Application {
         embers = new EmberField();
         embers.setAmbientEnabled(settings.isAmbientEnabled());
 
-        StackPane root = new StackPane(embers, content, gear);
+        Button historyButton = new Button("History");
+        historyButton.getStyleClass().add("btn-ghost");
+        historyButton.setTooltip(new Tooltip("Past games"));
+        historyButton.setOnAction(e -> {
+            sounds.play("click");
+            HistoryDialog.show(stage, stylesheet, history, (first, second) -> {
+                inputView.keepNames(first, second);
+                calculate(first, second);
+            });
+        });
+
+        StackPane root = new StackPane(embers, content, gear, historyButton);
+        StackPane.setAlignment(historyButton, Pos.TOP_LEFT);
+        StackPane.setMargin(historyButton, new Insets(10));
         embers.widthProperty().bind(root.widthProperty());
         embers.heightProperty().bind(root.heightProperty());
         StackPane.setAlignment(gear, Pos.TOP_RIGHT);
@@ -128,7 +143,7 @@ public final class MainApp extends Application {
         try {
             FlamesOutcome outcome = FlamesEngine.calculate(first, second);
             EliminationView elimination =
-                    new EliminationView(outcome, sounds, embers, () -> showResult(outcome));
+                    new EliminationView(outcome, sounds, embers, () -> showResult(outcome, false));
             swap(elimination, elimination::play);
         } catch (IllegalArgumentException ex) {
             sounds.play("error");
@@ -148,7 +163,7 @@ public final class MainApp extends Application {
                 count -> {
                     FlamesOutcome outcome = FlamesEngine.calculate(first, second, count);
                     EliminationView elimination = new EliminationView(
-                            outcome, sounds, embers, () -> showResult(outcome));
+                            outcome, sounds, embers, () -> showResult(outcome, true));
                     swap(elimination, elimination::playFromRing);
                 },
                 () -> swap(inputView, inputView::focusFirst));
@@ -156,9 +171,12 @@ public final class MainApp extends Application {
         });
     }
 
-    private void showResult(FlamesOutcome outcome) {
+    private void showResult(FlamesOutcome outcome, boolean manual) {
         sounds.play("fanfare");
         embers.celebrate();
+        history.add(new HistoryStore.Entry(Instant.now().toString(),
+                outcome.displayName1(), outcome.displayName2(),
+                outcome.category().letter(), outcome.remainingCount(), manual));
         ResultView result = new ResultView(outcome,
                 () -> {
                     inputView.keepNames(outcome.displayName1(), outcome.displayName2());
