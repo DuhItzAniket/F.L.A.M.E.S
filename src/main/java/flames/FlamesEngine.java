@@ -104,22 +104,64 @@ public final class FlamesEngine {
         }
 
         int count = remainingCount(name1, name2);
-        int step = count == 0 ? LETTERS.size() : count;
-
-        List<Character> ring = new ArrayList<>(LETTERS);
+        List<Round> rounds = eliminationRounds(count);
         List<Character> removed = new ArrayList<>();
-        int index = 0;
-        while (ring.size() > 1) {
-            index = (index + step - 1) % ring.size();
-            removed.add(ring.remove(index));
+        for (Round round : rounds) {
+            removed.add(round.removed());
         }
-
+        char survivor = rounds.get(rounds.size() - 1).remaining().charAt(0);
         return new FlamesOutcome(
-                FlamesCategory.fromLetter(ring.get(0)),
+                FlamesCategory.fromLetter(survivor),
                 count,
                 removed,
                 name1.strip(),
                 name2.strip());
+    }
+
+    /** One elimination round, for the recap table and the animation. */
+    public record Round(String inPlay, char removed, String remaining) {
+    }
+
+    /**
+     * The full elimination sequence for a count (0 wraps to a full cycle,
+     * same rule as {@link #calculate}). Always 5 rounds for F·L·A·M·E·S.
+     */
+    public static List<Round> eliminationRounds(int count) {
+        List<Character> ring = new ArrayList<>(LETTERS);
+        int step = count == 0 ? ring.size() : count;
+        List<Round> rounds = new ArrayList<>();
+        int index = 0;
+        while (ring.size() > 1) {
+            String inPlay = letters(ring);
+            index = (index + step - 1) % ring.size();
+            char removed = ring.remove(index);
+            rounds.add(new Round(inPlay, removed, letters(ring)));
+        }
+        return List.copyOf(rounds);
+    }
+
+    /**
+     * Bond meter 0–100: share of letters that paired up across both names.
+     * Identical names score 100, nothing in common scores 0.
+     */
+    public static int bondPercent(String name1, String name2) {
+        String first = normalize(name1);
+        String second = normalize(name2);
+        int total = first.codePointCount(0, first.length())
+                + second.codePointCount(0, second.length());
+        if (total == 0) {
+            return 0;
+        }
+        return (int) Math.round(
+                200.0 * cancellationOrder(name1, name2).size() / total);
+    }
+
+    private static String letters(List<Character> ring) {
+        StringBuilder text = new StringBuilder();
+        for (char letter : ring) {
+            text.append(letter);
+        }
+        return text.toString();
     }
 
     private static String emptyInputMessage(boolean firstEmpty, boolean secondEmpty) {

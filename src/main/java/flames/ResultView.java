@@ -1,13 +1,14 @@
 package flames;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,6 +32,15 @@ public final class ResultView extends VBox {
         names.setAlignment(Pos.CENTER);
         names.setTextAlignment(TextAlignment.CENTER);
 
+        HBox stepper = new HBox(8);
+        stepper.getStyleClass().add("stepper");
+        stepper.setAlignment(Pos.CENTER);
+        for (String stage : new String[]{"Names", "Cross out", "Count", "Reveal"}) {
+            Label step = new Label(stage);
+            step.getStyleClass().add("step-done");
+            stepper.getChildren().add(step);
+        }
+
         Label caption = new Label(captionFor(outcome));
         caption.getStyleClass().add("subtitle");
         caption.setWrapText(true);
@@ -47,6 +57,27 @@ public final class ResultView extends VBox {
         meaning.setAlignment(Pos.CENTER);
         meaning.setTextAlignment(TextAlignment.CENTER);
 
+        int bond = FlamesEngine.bondPercent(
+                outcome.displayName1(), outcome.displayName2());
+        Label bondLabel = new Label("Bond " + bond + "%");
+        bondLabel.getStyleClass().add("subtitle");
+        ProgressBar bondBar = new ProgressBar(bond / 100.0);
+        bondBar.getStyleClass().add("bond-bar");
+        bondBar.setMaxWidth(280);
+        bondBar.setTooltip(new Tooltip("Share of letters that paired up"));
+
+        Label recapTitle = new Label("How it happened");
+        recapTitle.getStyleClass().add("subtitle");
+        VBox recap = new VBox(2);
+        recap.setAlignment(Pos.CENTER);
+        int round = 1;
+        for (FlamesEngine.Round step : FlamesEngine.eliminationRounds(outcome.remainingCount())) {
+            Label row = new Label(round++ + " · " + spaced(step.inPlay())
+                    + " → out: " + step.removed() + " → left: " + spaced(step.remaining()));
+            row.getStyleClass().add("recap");
+            recap.getChildren().add(row);
+        }
+
         Button change = new Button("Change names");
         change.getStyleClass().add("btn-primary");
         change.setDefaultButton(true);
@@ -62,7 +93,8 @@ public final class ResultView extends VBox {
         HBox actions = new HBox(12, change, again);
         actions.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(names, caption, word, meaning, actions);
+        getChildren().addAll(stepper, names, caption, word, meaning,
+                bondLabel, bondBar, recapTitle, recap, actions);
     }
 
     /** Drops the verdict word in once the view is shown. */
@@ -76,6 +108,10 @@ public final class ResultView extends VBox {
         drop.setToY(0);
         drop.setInterpolator(Interpolator.EASE_OUT);
         drop.play();
+    }
+
+    private static String spaced(String letters) {
+        return String.join(" ", letters.split(""));
     }
 
     private static String captionFor(FlamesOutcome outcome) {

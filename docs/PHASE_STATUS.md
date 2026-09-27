@@ -238,3 +238,11 @@ Known limitations: full game UI (Phase 3), animation (Phase 4), icon/assets
   stray bursts), swap chains are re-entrancy harmless, trail cleared
   on strike/crown/finish.
 - Eyes-on verdict feel (motion, embers, whoosh balance) is yours.
+
+## Phase 23 — Recap, meter, counters, stepper — COMPLETE
+
+- `FlamesEngine.eliminationRounds` (tested, and now the single source
+  behind `calculate` too) drives a 5-row recap on the result view;
+  bond meter from pair overlap (tested); `n/50` counters under fields;
+  4-stage stepper tracking the show; fun disclaimer line.
+- Verification: suite 39 → 42 green; live launch log clean.

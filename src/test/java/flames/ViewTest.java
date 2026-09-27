@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 
@@ -173,6 +174,25 @@ class ViewTest {
             assertFalse(labeled(view.getChildren(), "meaning").getText().isBlank());
             String names = labeled(view.getChildren(), "names").getText();
             assertTrue(names.contains("john") && names.contains("jane"));
+        });
+    }
+
+    @Test
+    void verdictShowsRecapAndBond() throws Exception {
+        fx(() -> {
+            ResultView view = new ResultView(
+                    FlamesEngine.calculate("john", "jane"), () -> {
+                    }, () -> {
+                    });
+            List<Label> rows = new ArrayList<>();
+            collect(view.getChildren(), Label.class, rows);
+            assertEquals(5, rows.stream()
+                    .filter(l -> l.getStyleClass().contains("recap"))
+                    .count());
+            List<ProgressBar> bars = new ArrayList<>();
+            collect(view.getChildren(), ProgressBar.class, bars);
+            assertEquals(1, bars.size());
+            assertEquals(0.5, bars.get(0).getProgress());
         });
     }
 

@@ -41,11 +41,15 @@ public final class InputView extends VBox {
 
         Label firstLabel = new Label("First name");
         firstLabel.setLabelFor(firstName);
-        styleField(firstName, "e.g. Romeo", "First name — only letters count, the rest is ignored");
+        Label firstCount = counter();
+        styleField(firstName, "e.g. Romeo",
+                "First name — only letters count, the rest is ignored", firstCount);
 
         Label secondLabel = new Label("Second name");
         secondLabel.setLabelFor(secondName);
-        styleField(secondName, "e.g. Juliet", "Second name — only letters count, the rest is ignored");
+        Label secondCount = counter();
+        styleField(secondName, "e.g. Juliet",
+                "Second name — only letters count, the rest is ignored", secondCount);
 
         error.getStyleClass().add("error");
         error.setWrapText(true);
@@ -71,8 +75,11 @@ public final class InputView extends VBox {
         HBox actions = new HBox(12, calculate, clear);
         actions.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(logo, title, subtitle, firstLabel, firstName,
-                secondLabel, secondName, error, actions);
+        Label disclaimer = new Label("Just for fun — not a fortune teller.");
+        disclaimer.getStyleClass().add("hint");
+
+        getChildren().addAll(logo, title, subtitle, firstLabel, firstName, firstCount,
+                secondLabel, secondName, secondCount, error, actions, disclaimer);
     }
 
     /** Shows an inline error, or hides it when message is null. */
@@ -94,7 +101,15 @@ public final class InputView extends VBox {
         Platform.runLater(firstName::requestFocus);
     }
 
-    private void styleField(TextField field, String prompt, String tip) {
+    private static Label counter() {
+        Label counter = new Label("0/50");
+        counter.getStyleClass().add("hint");
+        counter.setMaxWidth(Double.MAX_VALUE);
+        counter.setAlignment(Pos.CENTER_RIGHT);
+        return counter;
+    }
+
+    private void styleField(TextField field, String prompt, String tip, Label counter) {
         field.setPromptText(prompt);
         field.setTooltip(new Tooltip(tip));
         field.getStyleClass().add("field");
@@ -103,6 +118,9 @@ public final class InputView extends VBox {
             String next = change.getControlNewText();
             return next.codePointCount(0, next.length()) <= 50 ? change : null;
         }));
-        field.textProperty().addListener((obs, old, value) -> showError(null));
+        field.textProperty().addListener((obs, old, value) -> {
+            showError(null);
+            counter.setText(value.codePointCount(0, value.length()) + "/50");
+        });
     }
 }

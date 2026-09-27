@@ -163,6 +163,24 @@ class FlamesEngineTest {
     }
 
     @Test
+    void eliminationRoundsRetellJohnJane() {
+        var rounds = FlamesEngine.eliminationRounds(4);
+        assertEquals(5, rounds.size());
+        assertEquals(new FlamesEngine.Round("FLAMES", 'M', "FLAES"), rounds.get(0));
+        assertEquals(new FlamesEngine.Round("FLAES", 'L', "FAES"), rounds.get(1));
+        assertEquals(new FlamesEngine.Round("FAES", 'F', "AES"), rounds.get(2));
+        assertEquals(new FlamesEngine.Round("AES", 'A', "ES"), rounds.get(3));
+        assertEquals(new FlamesEngine.Round("ES", 'S', "E"), rounds.get(4));
+    }
+
+    @Test
+    void bondPercentMeasuresOverlap() {
+        assertEquals(50, FlamesEngine.bondPercent("john", "jane"));
+        assertEquals(100, FlamesEngine.bondPercent("anna", "anna"));
+        assertEquals(0, FlamesEngine.bondPercent("abc", "def"));
+    }
+
+    @Test
     void everyCategoryResolvesFromItsLetter() {
         for (FlamesCategory category : FlamesCategory.values()) {
             assertEquals(category, FlamesCategory.fromLetter(category.letter()));

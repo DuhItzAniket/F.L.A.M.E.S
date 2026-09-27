@@ -91,6 +91,7 @@ public final class EliminationView extends VBox {
     private final EmberField embers;
     private final Runnable onDone;
     private final Label status = new Label();
+    private final HBox stepper = new HBox(8);
     private final VBox cancelBox = new VBox(10);
     private final HBox ringBox = new HBox(10);
     private final List<Chip> row1 = new ArrayList<>();
@@ -127,6 +128,15 @@ public final class EliminationView extends VBox {
 
         Label heading = new Label("Counting the letters\u2026");
         heading.getStyleClass().add("names");
+
+        stepper.getStyleClass().add("stepper");
+        stepper.setAlignment(Pos.CENTER);
+        for (String stage : new String[]{"Names", "Cross out", "Count", "Reveal"}) {
+            Label step = new Label(stage);
+            step.getStyleClass().add("step");
+            stepper.getChildren().add(step);
+        }
+        markStage(0);
 
         pops = FlamesEngine.cancellationOrder(
                 outcome.displayName1(), outcome.displayName2());
@@ -169,7 +179,16 @@ public final class EliminationView extends VBox {
                 }
             }
         });
-        getChildren().addAll(heading, cancelBox, ringBox, status, hint);
+        getChildren().addAll(stepper, heading, cancelBox, ringBox, status, hint);
+    }
+
+    /** Stage tracker: stages before current read done, current reads now. */
+    private void markStage(int current) {
+        for (int i = 0; i < stepper.getChildren().size(); i++) {
+            Label step = (Label) stepper.getChildren().get(i);
+            step.getStyleClass().removeAll("step", "step-now", "step-done");
+            step.getStyleClass().add(i < current ? "step-done" : i == current ? "step-now" : "step");
+        }
     }
 
     /** Starts the sequence. Safe to call once the view is shown. */
@@ -178,6 +197,7 @@ public final class EliminationView extends VBox {
             return;
         }
         Platform.runLater(this::requestFocus);
+        markStage(1);
         timeline = new Timeline();
         double at = 500;
 
@@ -223,6 +243,7 @@ public final class EliminationView extends VBox {
         }
 
         at = after(at + 500, () -> {
+            markStage(2);
             cancelBox.setVisible(false);
             cancelBox.setManaged(false);
             ringBox.setVisible(true);
@@ -267,6 +288,7 @@ public final class EliminationView extends VBox {
         }
 
         at = after(at + 500, () -> {
+            markStage(3);
             prepareCrown();
             Tile winner = tiles.get(outcome.category().letter());
             punch(winner.box);

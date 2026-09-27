@@ -195,6 +195,46 @@
     -fx-border-color: #C7A85E;
 }
 
+.stepper {
+    -fx-alignment: center;
+}
+
+.step {
+    -fx-font-size: 12px;
+    -fx-text-fill: #75644E;
+}
+
+.step-now {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #A02A22;
+}
+
+.step-done {
+    -fx-font-size: 12px;
+    -fx-text-fill: #2B2118;
+}
+
+.recap {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B5D4F;
+}
+
+.bond-bar {
+    -fx-pref-height: 10px;
+}
+
+.bond-bar > .track {
+    -fx-background-color: #D8C9AE;
+    -fx-background-radius: 5px;
+}
+
+.bond-bar > .bar {
+    -fx-background-color: #A02A22;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 0;
+}
+
 .icon-btn {
     -fx-background-color: transparent;
     -fx-background-radius: 10px;

@@ -194,6 +194,46 @@
     -fx-border-color: #8A6E35;
 }
 
+.stepper {
+    -fx-alignment: center;
+}
+
+.step {
+    -fx-font-size: 12px;
+    -fx-text-fill: #B9A888;
+}
+
+.step-now {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E0604F;
+}
+
+.step-done {
+    -fx-font-size: 12px;
+    -fx-text-fill: #F4E9D2;
+}
+
+.recap {
+    -fx-font-size: 13px;
+    -fx-text-fill: #C9B795;
+}
+
+.bond-bar {
+    -fx-pref-height: 10px;
+}
+
+.bond-bar > .track {
+    -fx-background-color: #4E4132;
+    -fx-background-radius: 5px;
+}
+
+.bond-bar > .bar {
+    -fx-background-color: #E0604F;
+    -fx-background-radius: 5px;
+    -fx-background-insets: 0;
+}
+
 .icon-btn {
     -fx-background-color: transparent;
     -fx-background-radius: 10px;
